@@ -16,11 +16,12 @@ class Property
     public const VALUE_SEPARATOR = ',';
     private const LINE_LENGTH = 75;
 
-    private mixed $value;
+    /** @var list $value */
+    private array $value;
 
     public function __construct(private string $name, array|int|string $value, private array $parameters = [])
     {
-        if ($value instanceof Component || is_array($value)) {
+        if (is_array($value)) {
             $this->value = $value;
         } else {
             $this->value = [$value];

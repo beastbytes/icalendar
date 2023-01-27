@@ -162,17 +162,16 @@ abstract class Component
 
     public const BEGIN = 'BEGIN';
     public const END = 'END';
-    public const VERSION = 'VERSION';
 
-    /** @var string[] $lines */
+    /** @var list<string> $lines */
     protected static array $lines = [];
     /**
-     * @var array<string, Component[]> $components
+     * @var array<string, list<Component>> $components
      */
     private array $components = [];
     private ?Component $parent = null;
     /**
-     * @var array<string, Property[]> $properties
+     * @var array<string, list<Property>> $properties
      */
     private array $properties = [];
 
@@ -191,11 +190,13 @@ abstract class Component
         return $new;
     }
 
+    /** @return array<string, list<Component>> */
     public function getComponents(): array
     {
         return $this->components;
     }
 
+    /** @return list<Component> */
     public function getComponent(string $component): ?array
     {
         return $this->components[$component] ?? null;
@@ -207,11 +208,13 @@ abstract class Component
         return (string)static::NAME;
     }
 
+    /** @return array<string, list<Property>> */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
+    /** @return list<Property> */
     public function getProperty(string $property): ?array
     {
         return $this->properties[$property] ?? null;
@@ -219,7 +222,7 @@ abstract class Component
 
     public function render(): string
     {
-        /** @var string[] $elements */
+        /** @var array<string> $elements */
         $elements = [];
         $elements[] = self::BEGIN . Property::PROPERTY_SEPARATOR . $this->getName();
 

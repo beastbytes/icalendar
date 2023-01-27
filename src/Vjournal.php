@@ -11,7 +11,6 @@ namespace BeastBytes\ICalendar;
 class Vjournal extends Component
 {
     public const NAME = 'VJOURNAL';
-    public const STATUS_CANCELLED = 'CANCELLED';
     public const STATUS_DRAFT = 'DRAFT';
     public const STATUS_FINAL = 'FINAL';
 }
