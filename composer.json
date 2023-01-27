@@ -1,0 +1,26 @@
+{
+    "name": "beastbytes/icalendar",
+    "type": "library",
+    "description": "Create and parse iCalendar",
+    "keywords": [
+        "icalendar",
+        "RFC 5545"
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "vimeo/psalm": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BeastBytes\\ICalendar\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    }
+}
