@@ -196,7 +196,10 @@ abstract class Component
         return $this->components;
     }
 
-    /** @return list<Component> */
+    /**
+     * @param string $component
+     * @return null|list<Component>
+     */
     public function getComponent(string $component): ?array
     {
         return $this->components[$component] ?? null;
@@ -208,13 +211,21 @@ abstract class Component
         return (string)static::NAME;
     }
 
+    public function getParent(): ?Component
+    {
+        return $this->parent;
+    }
+
     /** @return array<string, list<Property>> */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
-    /** @return list<Property> */
+    /**
+     * @param string $property
+     * @return null|list<Property>
+     */
     public function getProperty(string $property): ?array
     {
         return $this->properties[$property] ?? null;
@@ -251,7 +262,7 @@ abstract class Component
 
     private function isRoot(): bool
     {
-        return $this->parent === null;
+        return $this->getParent() === null;
     }
 
     private function setParent(Component $parent): void
