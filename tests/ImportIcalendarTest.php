@@ -26,6 +26,7 @@ class ImportIcalendarTest extends TestCase
      */
     public function test_icalendar_import($icalendar)
     {
+        $icalendar = implode("\r\n", $icalendar) . "\r\n";
         $imported = Vcalendar::import($icalendar);
 
         $this->assertInstanceOf(Vcalendar::class, $imported);
@@ -44,8 +45,8 @@ class ImportIcalendarTest extends TestCase
     public function icalendarProvider(): array
     {
         return [
-            'simple icalendar'  => [
-                implode("\r\n", [
+            'simple icalendar' => [
+                [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
                     'PRODID:-//RDU Software//NONSGML HandCal//EN',
@@ -57,10 +58,10 @@ class ImportIcalendarTest extends TestCase
                     'SUMMARY:Bastille Day Party',
                     'END:VEVENT',
                     'END:VCALENDAR'
-                ]) . "\r\n"
+                ]
             ],
             'many properties with same name' => [
-                implode("\r\n", [
+                [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
                     'PRODID:-//RDU Software//NONSGML HandCal//EN',
@@ -74,10 +75,10 @@ class ImportIcalendarTest extends TestCase
                     'URL:http://www.example.com/calendar/busytime/jsmith.ifb',
                     'END:VFREEBUSY',
                     'END:VCALENDAR'
-                ]) . "\r\n"
+                ]
             ],
             'properties with parameters' => [
-                implode("\r\n", [
+                [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
                     'PRODID:-//ABC Corporation//NONSGML My Product//EN',
@@ -99,10 +100,10 @@ class ImportIcalendarTest extends TestCase
                     'END:VALARM',
                     'END:VTODO',
                     'END:VCALENDAR'
-                ]) . "\r\n"
+                ]
             ],
             'folded lines' => [
-                implode("\r\n", [
+                [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
                     'PRODID:-//ABC Corporation//NONSGML My Product//EN',
@@ -116,7 +117,90 @@ class ImportIcalendarTest extends TestCase
                     "DESCRIPTION:Project xyz Review Meeting Minutes\\nAgenda\\n1. Review of projec\r\n t version 1.0 requirements.\\n2. Definition of project processes.\\n3. Revie\r\n w of project schedule.\\nParticipants: John Smith\, Jane Doe\, Jim Dandy\\n-\r\n It was decided that the requirements need to be signed off by product mark\r\n eting.\\n-Project processes were accepted.\\n-Project schedule needs to acco\r\n unt for scheduled holidays and employee vacation time. Check with HR for s\r\n pecific dates.\\n-New schedule will be distributed by Friday.\\n-Next weeks \r\n meeting is cancelled. No meeting until 3/23.",
                     'END:VJOURNAL',
                     'END:VCALENDAR'
-                ]) . "\r\n"
+                ]
+            ],
+            [
+                [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//ABC Corporation//NONSGML My Product//EN',
+                    'BEGIN:VTIMEZONE',
+                    'TZID:America/New_York',
+                    'LAST-MODIFIED:20050809T050000Z',
+                    'BEGIN:DAYLIGHT',
+                    'DTSTART:19670430T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=-1SU;UNTIL=19730429T070000Z',
+                    'TZOFFSETFROM:-0500',
+                    'TZOFFSETTO:-0400',
+                    'TZNAME:EDT',
+                    'END:DAYLIGHT',
+                    'BEGIN:STANDARD',
+                    'DTSTART:19671029T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU;UNTIL=20061029T060000Z',
+                    'TZOFFSETFROM:-0400',
+                    'TZOFFSETTO:-0500',
+                    'TZNAME:EST',
+                    'END:STANDARD',
+                    'BEGIN:DAYLIGHT',
+                    'DTSTART:19740106T020000',
+                    'RDATE:19750223T020000',
+                    'TZOFFSETFROM:-0500',
+                    'TZOFFSETTO:-0400',
+                    'TZNAME:EDT',
+                    'END:DAYLIGHT',
+                    'BEGIN:DAYLIGHT',
+                    'DTSTART:19760425T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=-1SU;UNTIL=19860427T070000Z',
+                    'TZOFFSETFROM:-0500',
+                    'TZOFFSETTO:-0400',
+                    'TZNAME:EDT',
+                    'END:DAYLIGHT',
+                    'BEGIN:DAYLIGHT',
+                    'DTSTART:19870405T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=1SU;UNTIL=20060402T070000Z',
+                    'TZOFFSETFROM:-0500',
+                    'TZOFFSETTO:-0400',
+                    'TZNAME:EDT',
+                    'END:DAYLIGHT',
+                    'BEGIN:DAYLIGHT',
+                    'DTSTART:20070311T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+                    'TZOFFSETFROM:-0500',
+                    'TZOFFSETTO:-0400',
+                    'TZNAME:EDT',
+                    'END:DAYLIGHT',
+                    'BEGIN:STANDARD',
+                    'DTSTART:20071104T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+                    'TZOFFSETFROM:-0400',
+                    'TZOFFSETTO:-0500',
+                    'TZNAME:EST',
+                    'END:STANDARD',
+                    'END:VTIMEZONE',
+                    'END:VCALENDAR'
+                ]
+            ],
+            [
+                [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'METHOD:xyz',
+                    'PRODID:-//ABC Corporation//NONSGML My Product//EN',
+                    'BEGIN:VEVENT',
+                    'DTSTAMP:19970324T120000Z',
+                    'SEQUENCE:0',
+                    'UID:uid3@example.com',
+                    'ORGANIZER:mailto:jdoe@example.com',
+                    'ATTENDEE;RSVP=TRUE:mailto:jsmith@example.com',
+                    'DTSTART:19970324T123000Z',
+                    'DTEND:19970324T210000Z',
+                    'RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2',
+                    'CATEGORIES:MEETING,PROJECT',
+                    'CLASS:PUBLIC',
+                    'SUMMARY:Meeting',
+                    'END:VEVENT',
+                    'END:VCALENDAR'
+                ]
             ]
         ];
     }

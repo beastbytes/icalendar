@@ -11,8 +11,6 @@ To create an iCalendar, create a new Vcalendar object then add properties and co
 properties and other components are added to components in a similar way; multiple components of the same type are 
 supported, as are multiple properties with the same name in a component.
 
-Use an array to specify multiple values for a property.
-
 Provide property parameters as an array where the key is the parameter name (hint: use class constants) and the value 
 is the value.  
 

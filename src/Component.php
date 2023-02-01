@@ -46,7 +46,6 @@ abstract class Component
     public const PARTICIPANT_DELEGATED = 'DELEGATED';
     public const PARTICIPANT_IN_PROCESS = 'IN-PROCESS';
     public const PARTICIPANT_NEEDS_ACTION = 'NEEDS-ACTION';
-    public const PROPERTY_ACTION = 'ACTION';
     public const PROPERTY_ATTACH = 'ATTACH';
     public const PROPERTY_ATTENDEE = 'ATTENDEE';
     public const PROPERTY_CALSCALE = 'CALSCALE';
@@ -82,12 +81,6 @@ abstract class Component
     public const PROPERTY_STATUS = 'STATUS';
     public const PROPERTY_SUMMARY = 'SUMMARY';
     public const PROPERTY_TRANSP = 'TRANSP';
-    public const PROPERTY_TRIGGER = 'TRIGGER';
-    public const PROPERTY_TZID = 'TZID';
-    public const PROPERTY_TZNAME = 'TZNAME';
-    public const PROPERTY_TZOFFSETFROM = 'TZOFFSETFROM';
-    public const PROPERTY_TZOFFSETTO = 'TZOFFSETTO';
-    public const PROPERTY_TZURL = 'TZURL';
     public const PROPERTY_UID = 'UID';
     public const PROPERTY_URL = 'URL';
     public const PROPERTY_VERSION = 'VERSION';
@@ -163,46 +156,53 @@ abstract class Component
     public const BEGIN = 'BEGIN';
     public const END = 'END';
 
+    protected const CARDINALITY_ONE_MAY = '*1';
+    protected const CARDINALITY_ONE_MUST = '1';
+    protected const CARDINALITY_ONE_OR_MORE_MAY = '*';
+    protected const CARDINALITY_ONE_OR_MORE_MUST = '1*';
+
     /** @var list<string> $lines */
     protected static array $lines = [];
+    /**
+     * @var array<string, Property|list<Property>> $properties
+     */
+    protected array $properties = [];
     /**
      * @var array<string, list<Component>> $components
      */
     private array $components = [];
     private ?Component $parent = null;
-    /**
-     * @var array<string, list<Property>> $properties
-     */
-    private array $properties = [];
 
     public function addComponent(Component $component): self
     {
         $new = clone $this;
         $component->setParent($new);
-        $new->components[$component->getName()][] = $component;
+        $new->components[] = $component;
         return $new;
     }
 
     public function addProperty(string $name, array|int|string $value, array $parameters = []): self
     {
         $new = clone $this;
-        $new->properties[$name][] = new Property($name, $value, $parameters);
+
+        if (in_array($this->cardinality($name), [self::CARDINALITY_ONE_MAY, self::CARDINALITY_ONE_MUST], true)) {
+            $new->properties[$name] = new Property($name, $value, $parameters);
+        } else {
+            $new->properties[$name][] = new Property($name, $value, $parameters);
+        }
+
         return $new;
     }
 
-    /** @return array<string, list<Component>> */
+    /** @return list<Component> */
     public function getComponents(): array
     {
         return $this->components;
     }
 
-    /**
-     * @param string $component
-     * @return null|list<Component>
-     */
-    public function getComponent(string $component): ?array
+    public function getComponent(int $index): ?Component
     {
-        return $this->components[$component] ?? null;
+        return $this->components[$index] ?? null;
     }
 
     public function getName(): string
@@ -216,48 +216,51 @@ abstract class Component
         return $this->parent;
     }
 
-    /** @return array<string, list<Property>> */
+    /** @return array<string, list<Property>|Property> */
     public function getProperties(): array
     {
         return $this->properties;
     }
 
     /**
-     * @param string $property
-     * @return null|list<Property>
+     * @param string $name
+     * @return list<Property>|Property|null
      */
-    public function getProperty(string $property): ?array
+    public function getProperty(string $name): array|Property|null
     {
-        return $this->properties[$property] ?? null;
+        return $this->properties[$name] ?? null;
     }
 
     public function render(): string
     {
-        /** @var array<string> $elements */
-        $elements = [];
-        $elements[] = self::BEGIN . Property::PROPERTY_SEPARATOR . $this->getName();
+        /** @var list<string> $lines */
+        $lines = [self::BEGIN . Property::PROPERTY_SEPARATOR . $this->getName()];
 
-        if ($this->getName() === Vcalendar::NAME && $this->getProperty(self::PROPERTY_VERSION) === null) {
-            $this->properties = [
-                self::PROPERTY_VERSION => [new Property(self::PROPERTY_VERSION, Vcalendar::VERSION)]
-            ] + $this->properties;
-        }
-
-        foreach ($this->getProperties() as $properties) {
-            foreach ($properties as $property) {
-                $elements[] = $property->render();
+        foreach (array_keys($this->properties) as $name) {
+            if (is_array($this->properties[$name])) {
+                foreach ($this->properties[$name] as $property) {
+                    $lines[] = $property->render();
+                }
+            } else {
+                $lines[] = $this
+                    ->properties[$name]
+                    ->render()
+                ;
             }
         }
 
-        foreach ($this->getComponents() as $components) {
-            foreach ($components as $component) {
-                $elements[] = $component->render();
-            }
+        foreach ($this->getComponents() as $component) {
+            $lines[] = $component->render();
         }
 
-        $elements[] = self::END . Property::PROPERTY_SEPARATOR . $this->getName();
+        $lines[] = self::END . Property::PROPERTY_SEPARATOR . $this->getName();
 
-        return implode("\r\n", $elements) . ($this->isRoot() ? "\r\n" : '');
+        return implode("\r\n", $lines) . ($this->isRoot() ? "\r\n" : '');
+    }
+
+    protected function cardinality($name)
+    {
+        return static::CARDINALITY[$name];
     }
 
     private function isRoot(): bool

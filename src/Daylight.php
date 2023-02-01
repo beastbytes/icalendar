@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace BeastBytes\ICalendar;
 
-class Daylight extends Component
+class Daylight extends Standard
 {
     public const NAME = 'DAYLIGHT';
 }

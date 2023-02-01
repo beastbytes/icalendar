@@ -14,8 +14,23 @@ class Vcalendar extends Component
 {
     public const NAME = 'VCALENDAR';
     public const VERSION = '2.0';
-    private const LINE_REGEX = '/^([A-Z]+)((;[-A-Z]+=(".+"|.+?))*):(.+)$/';
+
+    protected const CARDINALITY = [
+        self::PROPERTY_CALSCALE => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_METHOD => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_PRODID => self::CARDINALITY_ONE_MUST,
+        self::PROPERTY_VERSION => self::CARDINALITY_ONE_MUST,
+    ];
+
+    private const LINE_REGEX = '/^([-A-Z]+)((;[-A-Z]+=(".+"|.+?))*):(.+)$/';
     private const VALUE_SPLIT_REGEX = '/(?<!\\\),/';
+
+    public function __construct()
+    {
+        $this->properties = [
+            self::PROPERTY_VERSION => [new Property(self::PROPERTY_VERSION, self::VERSION)]
+        ];
+    }
 
     public static function import(string $icalendar): Vcalendar
     {
@@ -33,7 +48,7 @@ class Vcalendar extends Component
 
     private static function importComponent(Component $component): Component
     {
-        do {
+        while (true) {
             $line = array_shift(self::$lines);
 
             if (str_starts_with($line, Component::BEGIN . Property::PROPERTY_SEPARATOR)) {
@@ -48,12 +63,12 @@ class Vcalendar extends Component
                     Vtodo::NAME => new Vtodo()
                 };
                 $component = $component->addComponent(self::importComponent($childComponent));
-            } elseif (!str_starts_with($line, Component::END . Property::PROPERTY_SEPARATOR)) {
+            } elseif (str_starts_with($line, Component::END . Property::PROPERTY_SEPARATOR)) {
+                return $component;
+            } else {
                 $component = self::importProperty($component, $line);
             }
-        } while (count(self::$lines) > 0);
-
-        return $component;
+        }
     }
 
     private static function importProperty(Component $component, string $line): Component
@@ -63,23 +78,67 @@ class Vcalendar extends Component
             throw new InvalidArgumentException("Invalid iCalendar property: $line");
         }
 
-        $parameters = (!empty($property[2])
-            ? explode(Property::PARAMETER_SEPARATOR, substr($property[2], 1))
-            : []
-        );
+        if (!empty($property[2])) {
+            $keys = [];
+            $values = [];
 
-        $keys = [];
-        $values = [];
-        foreach ($parameters as $parameter) {
-            $parameter = explode(Property::EQUALS, $parameter);
-            $keys[] = $parameter[0];
-            $values[] = $parameter[1];
+            foreach (explode(Property::PARAMETER_SEPARATOR, substr($property[2], 1)) as $parameter) {
+                list($keys[], $values[]) = explode(Property::EQUALS, $parameter);
+            }
+
+            $parameters = array_combine($keys, $values);
+        } else {
+            $parameters = [];
         }
 
         return $component->addProperty(
             $property[1],
-            preg_split(self::VALUE_SPLIT_REGEX, $property[5]),
-            array_combine($keys, $values)
+            self::parseValue($property[1], $property[5]),
+            $parameters
         );
+    }
+
+    public static function parseValue(string $name, string $value): array|string
+    {
+        return match ($name) {
+            Vfreebusy::PROPERTY_FREEBUSY => self::freebusy($value),
+            self::PROPERTY_RRULE => self::rrule($value),
+            default => self::property($value)
+        };
+    }
+
+    public static function freebusy(string $value): array
+    {
+        $keys = [];
+        $values = [];
+
+        foreach (preg_split(self::VALUE_SPLIT_REGEX, $value) as $item) {
+            list($keys[], $values[]) = explode(Vfreebusy::FREEBUSY_SEPARATOR, $item);
+        }
+
+        return array_combine($keys, $values);
+    }
+
+    public static function property(string $value): array|string
+    {
+        $result = preg_split(self::VALUE_SPLIT_REGEX, $value);
+
+        return sizeof($result) === 1 ? $result[0] : $result;
+    }
+
+    public static function rrule(string $value): array
+    {
+        $keys = [];
+        $values = [];
+
+        foreach (explode(Property::RECUR_SEPARATOR, $value) as $item) {
+            list($keys[], $values[]) = explode(Property::EQUALS, $item);
+        }
+
+        foreach ($values as &$v) {
+            $v = explode(Property::LIST_SEPARATOR, $v);
+        }
+
+        return array_combine($keys, $values);
     }
 }

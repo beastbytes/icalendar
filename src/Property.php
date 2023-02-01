@@ -10,13 +10,14 @@ namespace BeastBytes\ICalendar;
 
 class Property
 {
+    public const LIST_SEPARATOR = ',';
     public const PARAMETER_SEPARATOR = ';';
     public const PROPERTY_SEPARATOR = ':';
+    public const RECUR_SEPARATOR = ';';
     public const EQUALS = '=';
-    public const VALUE_SEPARATOR = ',';
     private const LINE_LENGTH = 75;
 
-    /** @var list $value */
+    /** @var array $value */
     private array $value;
 
     public function __construct(private string $name, array|int|string $value, private array $parameters = [])
@@ -49,7 +50,14 @@ class Property
 
     public function getValue(): string
     {
-        return implode(self::VALUE_SEPARATOR, $this->value);
+        switch ($this->getName()) {
+            case Vfreebusy::PROPERTY_FREEBUSY:
+                return $this->freebusy();
+            case Component::PROPERTY_RRULE:
+                return $this->recur();
+            default:
+                return implode(self::LIST_SEPARATOR, $this->value);
+        }
     }
 
     public function render(): string
@@ -77,5 +85,29 @@ class Property
         }
 
         return $line;
+    }
+
+    private function freebusy(): string
+    {
+        $freebusy = [];
+
+        foreach ($this->value as $key => $value) {
+            $freebusy[] = is_string($key) ? $key . Vfreebusy::FREEBUSY_SEPARATOR . $value : $value;
+        }
+
+        return implode(self::LIST_SEPARATOR, $freebusy);
+    }
+
+    private function recur(): string
+    {
+        $recur = [];
+
+        foreach ($this->value as $key => $value) {
+            $recur[] = $key . self::EQUALS . (
+                is_array($value) ? implode(self::LIST_SEPARATOR, $value) : $value
+            );
+        }
+
+        return implode(self::RECUR_SEPARATOR, $recur);
     }
 }
