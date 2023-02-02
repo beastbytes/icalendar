@@ -5,16 +5,11 @@ The iCalendar library provides the ability to create [Internet Calendaring and S
 ## Creating iCalendar files
 The iCalendar library allows creation of iCalendar files in an object-oriented way.
 
-The library provides class constants to provide code completion and improve code readability.
-
-To create an iCalendar, create a new Vcalendar object then add properties and components to it; 
-properties and other components are added to components in a similar way; multiple components of the same type are 
-supported, as are multiple properties with the same name in a component.
-
-Provide property parameters as an array where the key is the parameter name (hint: use class constants) and the value 
-is the value.  
+To create an iCalendar, create a new Vcalendar object then add properties and components to it; properties and other components are added to child components in a similar way; multiple components of the same type are supported, as are multiple properties with the same name in a component.
 
 Finally, call the Vcalendar's render() method.
+
+All iCalendar components are immutable.
 
 ### Note
 The library does **not** do any checking for validity; it is possible to create a string that is not a valid iCalendar. 
@@ -58,8 +53,10 @@ $iCalendar = (new Vcalendar())
 ;
 ```
 
+See tests for more examples.
+
 ## Import iCalendar
-Import an iCalendar file using Vcalendar's static import() method:
+Import an iCalendar string using Vcalendar::import():
 
 ```php
 $icalendar = Vcalendar::import($string);
@@ -77,7 +74,7 @@ php composer.phar require --prefer-dist beastbytes/icalendar
 or add
 
 ```json
-"beastbytes/icalendar": "^1.0.0"
+"beastbytes/icalendar": "*"
 ```
 
 to the 'require' section of your composer.json.
