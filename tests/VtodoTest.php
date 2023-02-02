@@ -31,7 +31,7 @@ class VtodoTest extends TestCase
                         Vtodo::PROPERTY_DUE,
                         '20070501',
                         [
-                            Vtodo::PARAMETER_VALUE => Vtodo::VALUE_DATA_TYPE_DATE
+                            Vtodo::PARAMETER_VALUE => Vtodo::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Quebec Income Tax Return for 2006')

@@ -31,7 +31,7 @@ class VjournalTest extends TestCase
                         Vjournal::PROPERTY_DTSTART,
                         '19970317',
                         [
-                            Vjournal::PARAMETER_VALUE => Vjournal::VALUE_DATA_TYPE_DATE
+                            Vjournal::PARAMETER_VALUE => Vjournal::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vjournal::PROPERTY_SUMMARY, 'Staff meeting minutes')

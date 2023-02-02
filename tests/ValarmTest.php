@@ -30,7 +30,7 @@ class ValarmTest extends TestCase
                         Valarm::PROPERTY_TRIGGER,
                         '19970317T133000Z',
                         [
-                            Valarm::PARAMETER_VALUE => Valarm::VALUE_DATA_TYPE_DATE_TIME
+                            Valarm::PARAMETER_VALUE => Valarm::DATA_TYPE_DATE_TIME
                         ]
                     )
                     ->addProperty(Valarm::PROPERTY_REPEAT, 4)

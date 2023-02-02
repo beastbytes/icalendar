@@ -77,7 +77,7 @@ class VeventTest extends TestCase
                         Vevent::PROPERTY_DTSTART,
                         '19970901T130000Z',
                         [
-                            Vevent::PARAMETER_VALUE => Vevent::VALUE_DATA_TYPE_DATE
+                            Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Our Blissful Anniversary')
@@ -107,14 +107,14 @@ class VeventTest extends TestCase
                         Vevent::PROPERTY_DTSTART,
                         '20070628',
                         [
-                            Vevent::PARAMETER_VALUE => Vevent::VALUE_DATA_TYPE_DATE
+                            Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(
                         Vevent::PROPERTY_DTEND,
                         '20070709',
                         [
-                            Vevent::PARAMETER_VALUE => Vevent::VALUE_DATA_TYPE_DATE
+                            Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Festival International de Jazz de Montreal')
