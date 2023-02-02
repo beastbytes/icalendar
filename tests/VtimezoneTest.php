@@ -26,13 +26,15 @@ class VtimezoneTest extends TestCase
     {
         $daylight = new Daylight();
         $standard = new Standard();
+        $vTimezone = new Vtimezone();
+        $newYorkTimezone = $vTimezone->addProperty(Vtimezone::PROPERTY_TZID, 'America/New_York');
+        $fictitiousTimezone = $vTimezone->addProperty(Vtimezone::PROPERTY_TZID, 'Fictitious');
 
         return [
             [
-                (new Vtimezone())
-                    ->addProperty(Vtimezone::PROPERTY_TZID, 'America/New_York')
+                $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19670430T020000')
                         ->addProperty(
                             Daylight::PROPERTY_RRULE,
@@ -47,7 +49,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '19671029T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -62,14 +64,14 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Standard::PROPERTY_TZOFFSETTO, '-0500')
                         ->addProperty(Standard::PROPERTY_TZNAME, 'EST')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19740106T020000')
                         ->addProperty(Daylight::PROPERTY_RDATE, '19750223T020000')
                         ->addProperty(Daylight::PROPERTY_TZOFFSETFROM, '-0500')
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19760425T020000')
                         ->addProperty(
                             Daylight::PROPERTY_RRULE,
@@ -84,7 +86,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19870405T020000')
                         ->addProperty(
                             Daylight::PROPERTY_RRULE,
@@ -99,7 +101,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '20070311T020000')
                         ->addProperty(
                             Daylight::PROPERTY_RRULE,
@@ -113,7 +115,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '20071104T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -185,16 +187,15 @@ class VtimezoneTest extends TestCase
                 ]
             ],
             [
-                (new Vtimezone())
-                    ->addProperty(Vtimezone::PROPERTY_TZID, 'America/New_York')
+                $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '20071104T020000')
                         ->addProperty(Standard::PROPERTY_TZOFFSETFROM, '-0400')
                         ->addProperty(Standard::PROPERTY_TZOFFSETTO, '-0500')
                         ->addProperty(Standard::PROPERTY_TZNAME, 'EST')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '20070311T020000')
                         ->addProperty(Daylight::PROPERTY_TZOFFSETFROM, '-0500')
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
@@ -221,14 +222,13 @@ class VtimezoneTest extends TestCase
                 ]
             ],
             [
-                (new Vtimezone())
-                    ->addProperty(Vtimezone::PROPERTY_TZID, 'America/New_York')
+                $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
                     ->addProperty(
                         Vtimezone::PROPERTY_TZURL,
                         'http://zones.example.com/tz/America-New_York.ics'
                     )
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '20071104T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -242,7 +242,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Standard::PROPERTY_TZOFFSETTO, '-0500')
                         ->addProperty(Standard::PROPERTY_TZNAME, 'EST')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '20070311T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -280,10 +280,9 @@ class VtimezoneTest extends TestCase
                 ]
             ],
             [
-                (new Vtimezone())
-                    ->addProperty(Vtimezone::PROPERTY_TZID, 'Fictitious')
+                $fictitiousTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '19870101T000000Z')
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '19671029T020000')
                         ->addProperty(
                            Standard::PROPERTY_RRULE,
@@ -297,7 +296,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Standard::PROPERTY_TZOFFSETTO, '-0500')
                         ->addProperty(Standard::PROPERTY_TZNAME, 'EST')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19870405T020000')
                         ->addProperty(
                             Daylight::PROPERTY_RRULE,
@@ -335,10 +334,9 @@ class VtimezoneTest extends TestCase
                 ]
             ],
             [
-                (new Vtimezone())
-                    ->addProperty(Vtimezone::PROPERTY_TZID, 'Fictitious')
+                $fictitiousTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '19870101T000000Z')
-                    ->addComponent((new Standard())
+                    ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DTSTART, '19671029T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -352,7 +350,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Standard::PROPERTY_TZOFFSETTO, '-0500')
                         ->addProperty(Standard::PROPERTY_TZNAME, 'EST')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19870405T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
@@ -367,7 +365,7 @@ class VtimezoneTest extends TestCase
                         ->addProperty(Daylight::PROPERTY_TZOFFSETTO, '-0400')
                         ->addProperty(Daylight::PROPERTY_TZNAME, 'EDT')
                     )
-                    ->addComponent((new Daylight())
+                    ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DTSTART, '19990424T020000')
                         ->addProperty(
                             Standard::PROPERTY_RRULE,
