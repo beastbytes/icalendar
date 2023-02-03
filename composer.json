@@ -7,7 +7,8 @@
         "RFC 5545"
     ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
