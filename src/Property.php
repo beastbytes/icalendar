@@ -75,11 +75,23 @@ class Property
         if (strlen($line) > self::LINE_LENGTH) {
             $folded = [];
 
-            while (strlen($line) > self::LINE_LENGTH) {
-                $folded[] = substr($line, 0, self::LINE_LENGTH);
-                $line = ' ' . substr($line, self::LINE_LENGTH);
-            }
-            $folded[] = $line;
+            $chars = mb_str_split($line);
+            $byteCount = 0;
+            $fold = '';
+
+            do {
+                $char = array_shift($chars);
+                $byteCount += strlen($char);
+
+                if ($byteCount <= self::LINE_LENGTH) {
+                    $fold .= $char;
+                } else {
+                    $folded[] = $fold;
+                    $fold = ' ' . $char;
+                    $byteCount = strlen($fold);
+                }
+            } while (count($chars) > 0);
+            $folded[] = $fold;
 
             $line = implode("\r\n", $folded);
         }
