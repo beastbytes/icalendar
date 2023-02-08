@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+namespace Tests;
 
 use BeastBytes\ICalendar\Vfreebusy;
 use PHPUnit\Framework\TestCase;

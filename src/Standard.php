@@ -24,4 +24,6 @@ class Standard extends Component
         self::PROPERTY_TZOFFSETFROM => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_TZOFFSETTO => self::CARDINALITY_ONE_MUST,
     ];
+
+    protected const COMPONENTS = [];
 }

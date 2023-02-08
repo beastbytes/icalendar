@@ -27,8 +27,10 @@ class Vfreebusy extends Component
         self::PROPERTY_DTSTART => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_ORGANIZER => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_FREEBUSY => self::CARDINALITY_ONE_OR_MORE_MAY,
-        self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_UID => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_URL => self::CARDINALITY_ONE_MAY,
     ];
+
+    protected const COMPONENTS = [];
 }

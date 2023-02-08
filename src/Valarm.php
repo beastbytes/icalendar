@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace BeastBytes\ICalendar;
 
+use InvalidArgumentException;
 use RuntimeException;
 
 class Valarm extends Component
@@ -25,14 +26,39 @@ class Valarm extends Component
         self::PROPERTY_DESCRIPTION => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_DURATION => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_REPEAT => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_SUMMARY => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_TRIGGER => self::CARDINALITY_ONE_MUST,
     ];
 
-    protected function cardinality($name): ?string
+    protected const COMPONENTS = [];
+
+    protected const PROPERTIES = [
+        'common' => [
+            self::PROPERTY_ACTION,
+            self::PROPERTY_DURATION,
+            self::PROPERTY_REPEAT,
+            self::PROPERTY_REQUEST_STATUS,
+            self::PROPERTY_TRIGGER,
+        ],
+        self::ACTION_AUDIO => [
+            self::PROPERTY_ATTACH,
+        ],
+        self::ACTION_DISPLAY => [
+            self::PROPERTY_DESCRIPTION,
+        ],
+        self::ACTION_EMAIL => [
+            self::PROPERTY_ATTACH,
+            self::PROPERTY_ATTENDEE,
+            self::PROPERTY_DESCRIPTION,
+            self::PROPERTY_SUMMARY,
+        ]
+    ];
+
+    protected function cardinality(string $name): string
     {
         if ($name === self::PROPERTY_ATTACH) {
-            $cardinality = match ($this->getProperty(self::PROPERTY_ACTION)->getValue()) {
+            $cardinality = match ($this->getProperty(self::PROPERTY_ACTION, 0)->getValue()) {
                 self::ACTION_AUDIO => self::CARDINALITY_ONE_MAY,
                 self::ACTION_EMAIL => self::CARDINALITY_ONE_OR_MORE_MAY,
                 default => null
@@ -50,5 +76,28 @@ class Valarm extends Component
         }
 
         return self::CARDINALITY[$name];
+    }
+
+    protected function checkPropertyValid(string $name): void
+    {
+        $properties = array_merge(
+            self::PROPERTIES['common'],
+            $this->hasProperty(self::PROPERTY_ACTION)
+                ? self::PROPERTIES[$this->getProperty(self::PROPERTY_ACTION, 0)->getValue()]
+                : []
+            ,
+            self::$ianaProperties,
+            self::$xProperties
+        );
+
+        if (!in_array($name, $properties)) {
+            throw new InvalidArgumentException(strtr(
+                '<property> not a valid property of <component>',
+                [
+                    '<property>' => $name,
+                    '<component>' => $this->getName()
+                ]
+            ));
+        }
     }
 }

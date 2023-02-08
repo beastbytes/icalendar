@@ -11,9 +11,6 @@ Finally, call the Vcalendar's render() method.
 
 All iCalendar components are immutable.
 
-### Note
-The library does **not** do any checking for validity; it is possible to create a string that is not a valid iCalendar. 
-
 ### Example
 The following example creates a To-Do with an alarm (it is the example on page 146 of RFC5545).
 

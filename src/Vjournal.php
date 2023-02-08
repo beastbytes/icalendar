@@ -31,7 +31,7 @@ class Vjournal extends Component
         self::PROPERTY_RDATE => self::CARDINALITY_ONE_OR_MORE_MAY,
         self::PROPERTY_RECURRENCE_ID => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_RELATED_TO => self::CARDINALITY_ONE_OR_MORE_MAY,
-        self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_RRULE => self::CARDINALITY_ONE_OR_MORE_MAY,
         self::PROPERTY_SEQUENCE => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_STATUS => self::CARDINALITY_ONE_MAY,
@@ -39,4 +39,6 @@ class Vjournal extends Component
         self::PROPERTY_UID => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_URL => self::CARDINALITY_ONE_MAY,
     ];
+
+    protected const COMPONENTS = [];
 }

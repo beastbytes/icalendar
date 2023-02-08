@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace BeastBytes\ICalendar;
 
+use InvalidArgumentException;
+
 abstract class Component
 {
     public const CLASSIFICATION_CONFIDENTIAL = 'CONFIDENTIAL';
@@ -161,8 +163,21 @@ abstract class Component
     protected const CARDINALITY_ONE_OR_MORE_MAY = '*';
     protected const CARDINALITY_ONE_OR_MORE_MUST = '1*';
 
-    /** @var list<string> $lines */
+    private const X_PROPERTY = 'X-';
+
+    /**
+     * @var list<string> $ianaProperties
+     */
+    protected static array $ianaProperties = [];
+    /**
+     * @var list<string> $lines
+     */
     protected static array $lines = [];
+    /**
+     * @var list<string> $xProperties
+     */
+    protected static array $xProperties = [];
+
     /**
      * @var array<string, Property|list<Property>> $properties
      */
@@ -172,21 +187,45 @@ abstract class Component
      */
     private array $components = [];
     private ?Component $parent = null;
+    private array $validProperties = [];
+
+    public function __construct()
+    {
+        $this->validProperties = array_merge(
+            array_keys(static::CARDINALITY),
+            self::$ianaProperties,
+            self::$xProperties
+        );
+    }
 
     public function addComponent(Component $component): self
     {
+        $this->checkComponentValid($component);
+
         $new = clone $this;
         $component->setParent($new);
-        $new->components[] = $component;
+        $new->components[$component->getName()][] = $component;
+        return $new;
+    }
+
+    public function setComponent(Component $component, int $index): self
+    {
+        $this->checkComponentValid($component);
+
+        $new = clone $this;
+        $component->setParent($new);
+        $new->components[$component->getName()][$index] = $component;
         return $new;
     }
 
     public function addProperty(string $name, array|int|string $value, array $parameters = []): self
     {
+        $this->checkPropertyValid($name);
+
         $new = clone $this;
 
         if (in_array($this->cardinality($name), [self::CARDINALITY_ONE_MAY, self::CARDINALITY_ONE_MUST], true)) {
-            $new->properties[$name] = new Property($name, $value, $parameters);
+            $new->properties[$name][0] = new Property($name, $value, $parameters);
         } else {
             $new->properties[$name][] = new Property($name, $value, $parameters);
         }
@@ -194,15 +233,70 @@ abstract class Component
         return $new;
     }
 
-    /** @return list<Component> */
+    public function setProperty(string $name, int $index, array|int|string $value, array $parameters = []): self
+    {
+        $this->checkPropertyValid($name);
+
+        $new = clone $this;
+
+        if (in_array($this->cardinality($name), [self::CARDINALITY_ONE_MAY, self::CARDINALITY_ONE_MUST], true)) {
+            $index = 0;
+        }
+
+        $new->properties[$name][$index] = new Property($name, $value, $parameters);
+
+        return $new;
+    }
+
+    /** @return array<string, list<Component>> */
     public function getComponents(): array
     {
         return $this->components;
     }
 
-    public function getComponent(int $index): ?Component
+    /**
+     * Gets a child component
+     *
+     * @param string $name Name of the component
+     * @param int|null $index Index of the component to return. If NULL all components of type $name are returned
+     * @return list<Component>|Component|null NULL if the named component does not exist, a component if $index is
+     * given or an array of components of type $name if not
+     */
+    public function getComponent(string $name, ?int $index): array|Component|null
     {
-        return $this->components[$index] ?? null;
+        if (!$this->hasComponent($name)) {
+            return null;
+        }
+
+        return $index === null ? $this->components[$name] : $this->components[$name][$index];
+    }
+
+
+    /**
+     * Remove component(s) by name
+     *
+     * Removing a component also removes all the component's properties and child components
+     *
+     * @param string $name Name of the component to remove
+     * @param int|null $index Index of the component to remove. If NULL all components of type $name are removed
+     * @return Component
+     */
+    public function removeComponent(string $name, ?int $index): self
+    {
+        $new = clone $this;
+
+        if ($index === null) {
+            unset($new->components[$name]);
+        } else {
+            unset($new->components[$name][$index]);
+        }
+
+        return $new;
+    }
+
+    public function hasComponent(string $name): bool
+    {
+        return isset($this->components[$name]);
     }
 
     public function getName(): string
@@ -223,12 +317,43 @@ abstract class Component
     }
 
     /**
-     * @param string $name
-     * @return list<Property>|Property|null
+     * Gets a property of the component
+     *
+     * @param string $name Name of the property
+     * @param int|null $index Index of the property to return. If NULL all properties of type $name are returned
+     * @return list<Property>|Property|null NULL if the named property does not exist, a property if $index is
+     * given or an array of properties of type $name if not
      */
-    public function getProperty(string $name): array|Property|null
+    public function getProperty(string $name, ?int $index = null): array|Property|null
     {
-        return $this->properties[$name] ?? null;
+        if (!$this->hasProperty($name)) {
+            return null;
+        }
+
+        return $index === null ? $this->properties[$name] : $this->properties[$name][$index];
+    }
+
+    public function hasProperty(string $name): bool
+    {
+        return isset($this->properties[$name]);
+    }
+
+    /**
+     * @param string $name Name of the property to remove
+     * @param int|null $index Index of the property to remove. If NULL all properties of type $name are removed
+     * @return Component
+     */
+    public function removeProperty(string $name, ?int $index): self
+    {
+        $new = clone $this;
+
+        if ($index === null) {
+            unset($new->properties[$name]);
+        } else {
+            unset($new->properties[$name][$index]);
+        }
+
+        return $new;
     }
 
     public function render(): string
@@ -237,20 +362,15 @@ abstract class Component
         $lines = [self::BEGIN . Property::PROPERTY_SEPARATOR . $this->getName()];
 
         foreach (array_keys($this->properties) as $name) {
-            if (is_array($this->properties[$name])) {
-                foreach ($this->properties[$name] as $property) {
-                    $lines[] = $property->render();
-                }
-            } else {
-                $lines[] = $this
-                    ->properties[$name]
-                    ->render()
-                ;
+            foreach ($this->properties[$name] as $property) {
+                $lines[] = $property->render();
             }
         }
 
-        foreach ($this->getComponents() as $component) {
-            $lines[] = $component->render();
+        foreach ($this->getComponents() as $components) {
+            foreach ($components as $component) {
+                $lines[] = $component->render();
+            }
         }
 
         $lines[] = self::END . Property::PROPERTY_SEPARATOR . $this->getName();
@@ -258,9 +378,49 @@ abstract class Component
         return implode("\r\n", $lines) . ($this->isRoot() ? "\r\n" : '');
     }
 
-    protected function cardinality($name)
+    public static function registerIanaProperty(string $name)
+    {
+        self::$ianaProperties[] = $name;
+    }
+
+    public static function registerXProperty(string $name)
+    {
+        if (!str_starts_with($name, self::X_PROPERTY)) {
+            throw new InvalidArgumentException('X properties must start with ' . self::X_PROPERTY);
+        }
+
+        self::$xProperties[] = $name;
+    }
+
+    protected function cardinality(string $name): string
     {
         return static::CARDINALITY[$name];
+    }
+
+    private function checkComponentValid(Component $component): void
+    {
+        if (!in_array($component->getName(), static::COMPONENTS, true)) {
+            throw new InvalidArgumentException(strtr(
+                '<child> not a valid component of <parent>',
+                [
+                    '<child>' => $component->getName(),
+                    '<parent>' => $this->getName()
+                ]
+            ));
+        }
+    }
+
+    protected function checkPropertyValid(string $name): void
+    {
+        if (!in_array($name, $this->validProperties)) {
+            throw new InvalidArgumentException(strtr(
+                '<property> not a valid property of <component>',
+                [
+                    '<property>' => $name,
+                    '<component>' => $this->getName()
+                ]
+            ));
+        }
     }
 
     private function isRoot(): bool

@@ -19,4 +19,9 @@ class Vtimezone extends Component
         self::PROPERTY_TZID => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_TZURL => self::CARDINALITY_ONE_MAY,
     ];
+
+    protected const COMPONENTS = [
+        Daylight::NAME,
+        Standard::NAME,
+    ];
 }

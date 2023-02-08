@@ -6,6 +6,8 @@
 
 declare(strict_types=1);
 
+namespace Tests;
+
 
 use BeastBytes\ICalendar\Vevent;
 use PHPUnit\Framework\TestCase;

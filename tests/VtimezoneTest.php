@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+namespace Tests;
 
 use BeastBytes\ICalendar\Daylight;
 use BeastBytes\ICalendar\Standard;
@@ -141,13 +142,6 @@ class VtimezoneTest extends TestCase
                     'TZOFFSETTO:-0400',
                     'TZNAME:EDT',
                     'END:DAYLIGHT',
-                    'BEGIN:STANDARD',
-                    'DTSTART:19671029T020000',
-                    'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU;UNTIL=20061029T060000Z',
-                    'TZOFFSETFROM:-0400',
-                    'TZOFFSETTO:-0500',
-                    'TZNAME:EST',
-                    'END:STANDARD',
                     'BEGIN:DAYLIGHT',
                     'DTSTART:19740106T020000',
                     'RDATE:19750223T020000',
@@ -176,6 +170,13 @@ class VtimezoneTest extends TestCase
                     'TZOFFSETTO:-0400',
                     'TZNAME:EDT',
                     'END:DAYLIGHT',
+                    'BEGIN:STANDARD',
+                    'DTSTART:19671029T020000',
+                    'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU;UNTIL=20061029T060000Z',
+                    'TZOFFSETFROM:-0400',
+                    'TZOFFSETTO:-0500',
+                    'TZNAME:EST',
+                    'END:STANDARD',
                     'BEGIN:STANDARD',
                     'DTSTART:20071104T020000',
                     'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',

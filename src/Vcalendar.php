@@ -22,11 +22,21 @@ class Vcalendar extends Component
         self::PROPERTY_VERSION => self::CARDINALITY_ONE_MUST,
     ];
 
+    protected const COMPONENTS = [
+        Vevent::NAME,
+        Vfreebusy::NAME,
+        Vjournal::NAME,
+        Vtimezone::NAME,
+        Vtodo::NAME
+    ];
+
     private const LINE_REGEX = '/^([-A-Z]+)((;[-A-Z]+=(".+"|.+?))*):(.+)$/';
     private const VALUE_SPLIT_REGEX = '/(?<!\\\),/';
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->properties = [
             self::PROPERTY_VERSION => [new Property(self::PROPERTY_VERSION, self::VERSION)]
         ];
