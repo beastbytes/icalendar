@@ -7,6 +7,7 @@
         "RFC 5545",
         "RFC 7986"
     ],
+    "license": "BSD-3-Clause",
     "require": {
         "php": "^8.0",
         "ext-mbstring": "*"
