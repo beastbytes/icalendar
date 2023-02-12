@@ -29,9 +29,9 @@ class VfreebusyTest extends TestCase
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T082949Z-FA43EF@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ORGANIZER, 'mailto:jane_doe@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ATTENDEE, 'mailto:john_public@example.com')
-                    ->addProperty(Vfreebusy::PROPERTY_DTSTART, '19971015T050000Z')
-                    ->addProperty(Vfreebusy::PROPERTY_DTEND, '19971016T050000Z')
-                    ->addProperty(Vfreebusy::PROPERTY_DTSTAMP, '19970901T083000Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_START, '19971015T050000Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_END, '19971016T050000Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T083000Z')
                 ,
                 [
                     'BEGIN:VFREEBUSY',
@@ -49,7 +49,7 @@ class VfreebusyTest extends TestCase
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T095957Z-76A912@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ORGANIZER, 'mailto:jane_doe@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ATTENDEE, 'mailto:john_public@example.com')
-                    ->addProperty(Vfreebusy::PROPERTY_DTSTAMP, '19970901T100000Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T100000Z')
                     ->addProperty(
                         Vfreebusy::PROPERTY_FREEBUSY,
                         [
@@ -79,10 +79,10 @@ class VfreebusyTest extends TestCase
             [
                 (new Vfreebusy())
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T115957Z-76A912@example.com')
-                    ->addProperty(Vfreebusy::PROPERTY_DTSTAMP, '19970901T120000Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T120000Z')
                     ->addProperty(Vfreebusy::PROPERTY_ORGANIZER, 'jsmith@example.com')
-                    ->addProperty(Vfreebusy::PROPERTY_DTSTART, '19980313T141711Z')
-                    ->addProperty(Vfreebusy::PROPERTY_DTEND, '19980410T141711Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_START, '19980313T141711Z')
+                    ->addProperty(Vfreebusy::PROPERTY_DATETIME_END, '19980410T141711Z')
                     ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, ['19980314T233000Z' => '19980315T003000Z'])
                     ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, '19980316T153000Z/19980316T163000Z')
                     ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, ['19980318T030000Z' => '19980318T040000Z'])

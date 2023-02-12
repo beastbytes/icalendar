@@ -1,9 +1,9 @@
 # iCalendar
-The iCalendar library provides the ability to create [Internet Calendaring and Scheduling (iCalendar)]
-(https://datatracker.ietf.org/doc/html/rfc5545) strings.
+The iCalendar library provides the ability to create, edit, and import [RFC 5545 - Internet Calendaring and Scheduling (iCalendar)](https://datatracker.ietf.org/doc/html/rfc5545)
+including properties defined in [RFC 7986 - New Properties for iCalendar](https://datatracker.ietf.org/doc/html/rfc7986).
 
-## Creating iCalendar files
-The iCalendar library allows creation of iCalendar files in an object-oriented way.
+## Creating iCalendars
+The iCalendar library allows creation of iCalendars in an object-oriented way.
 
 To create an iCalendar, create a new Vcalendar object then add properties and components to it; properties and other components are added to child components in a similar way; multiple components of the same type are supported, as are multiple properties with the same name in a component.
 
@@ -18,7 +18,7 @@ The following example creates a To-Do with an alarm (it is the example on page 1
 $iCalendar = (new Vcalendar())
     ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
     ->addComponent((new Vtodo())
-        ->addProperty(Vtodo::PROPERTY_DTSTAMP, '19980130T134500Z')
+        ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '19980130T134500Z')
         ->addProperty(Vtodo::PROPERTY_SEQUENCE, 2)
         ->addProperty(Vtodo::PROPERTY_UID, 'uid4@example.com')
         ->addProperty(Vtodo::PROPERTY_ORGANIZER, 'mailto:unclesam@example.com')
@@ -26,7 +26,7 @@ $iCalendar = (new Vcalendar())
             Vtodo::PROPERTY_ATTENDEE,
             'mailto:jqpublic@example.com',
             [
-                Vtodo::PARAMETER_PARTSTAT => Vtodo::PARTICIPANT_ACCEPTED
+                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
             ]
         )
         ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
@@ -39,7 +39,7 @@ $iCalendar = (new Vcalendar())
                 Valarm::PROPERTY_ATTACH,
                 'http://example.com/pub/audio-files/ssbanner.aud',
                 [
-                    Valarm::PARAMETER_FMTTYPE => 'audio/basic'
+                    Valarm::PARAMETER_FORMAT_TYPE => 'audio/basic'
                 ]
             )
             ->addProperty(Valarm::PROPERTY_REPEAT, 4)
@@ -51,6 +51,66 @@ $iCalendar = (new Vcalendar())
 ```
 
 See tests for more examples.
+
+### Non-standard Components
+IANA and X- components can be added to the iCalender object (Vcalendar).
+
+Non-standard components must extend Component and define the NAME constant; they must be registered in Vcalendar before use.
+
+```php
+use BeastBytes\ICalendar\Component;
+
+class NonStandardComponent extends Component
+{
+    public const NAME = 'NON-STANDARD-COMPONENT';
+
+    protected const CARDINALITY = [
+        // declare cardinality of the component's properties here
+    ];
+}
+---
+Vcalendar::registerNonStandardComponent(NonStandardComponent::NAME);
+
+$nonStandardComponent = new NonStandardComponent();
+
+$vCalendar = (new Vcalendar())->addComponent($nonStandardComponent);
+// $vCalendar->hasComponent(NonStandardComponent::NAME) === true;
+```
+
+### Non-standard Properties
+IANA and X- properties can be added to iCalender components.
+
+Non-standard properties must be registered with the component before use; the default cardinality is one or many may be present.
+
+```php
+public const NON_STANDARD_PROPERTY = 'NON-STANDARD-PROPERTY';
+
+Vevent::registerNonStandardProperty(self::NON_STANDARD_PROPERTY, Vevent::CARDINALITY_ONE_MAY);
+
+$vEvent = (new Vevent())->addProperty(self::NON_STANDARD_PROPERTY, $value);
+// $vEvent->hasProperty(self::NON_STANDARD_PROPERTY) === true;
+```
+
+## Edit iCalendar
+iCalendar components can be edited, for example when updating a Vevent.
+
+The library has methods for editing components:
+
+* hasComponent($name) - whether a component has one or more components of type $name
+* getComponents() - returns all child components
+* getComponent($name) - returns all child components of type $name
+* getComponent($name, $n) - returns the $nth occurrence of the child component of type $name
+* setComponent($component, $n) - set (overwrite) the $nth occurrence of the type of $component with $component
+* removeComponent($name) - remove all child components of type $name
+* removeComponent($name, $n) - remove the $nth occurrence of the child component of type $name
+
+* hasProperty($name) - whether a component has one or more properties of type $name
+* getProperties() - returns all component properties
+* getProperty($name) - returns all component properties of type $name
+* getProperty($name, $n) - returns the $nth occurrence of the component property of type $name
+* setProperty($name, $n, $value, $parameters) - set (overwrite) the $nth occurrence of the property of type $name with new $value and $parameters
+* removeProperty($name) - remove all component properties of type $name
+* removeProperty($name, $n) - remove the $nth occurrence of the component property of type $name
 
 ## Import iCalendar
 Import an iCalendar string using Vcalendar::import():

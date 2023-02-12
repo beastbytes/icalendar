@@ -14,7 +14,7 @@ class Vtimezone extends Component
     public const PROPERTY_TZID = 'TZID';
     public const PROPERTY_TZURL = 'TZURL';
 
-    protected const CARDINALITY = [
+    public const CARDINALITY = [
         self::PROPERTY_LAST_MODIFIED => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_TZID => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_TZURL => self::CARDINALITY_ONE_MAY,

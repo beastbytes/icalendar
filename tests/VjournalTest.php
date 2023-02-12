@@ -27,9 +27,9 @@ class VjournalTest extends TestCase
             [
                 (new Vjournal())
                     ->addProperty(Vjournal::PROPERTY_UID, '19970901T130000Z-123405@example.com')
-                    ->addProperty(Vjournal::PROPERTY_DTSTAMP, '19970901T130000Z')
+                    ->addProperty(Vjournal::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
                     ->addProperty(
-                        Vjournal::PROPERTY_DTSTART,
+                        Vjournal::PROPERTY_DATETIME_START,
                         '19970317',
                         [
                             Vjournal::PARAMETER_VALUE => Vjournal::DATA_TYPE_DATE

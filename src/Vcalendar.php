@@ -8,17 +8,33 @@ declare(strict_types=1);
 
 namespace BeastBytes\ICalendar;
 
-use InvalidArgumentException;
+use BeastBytes\ICalendar\Exception\InvalidComponentException;
+use BeastBytes\ICalendar\Exception\InvalidPropertyException;
+use UnhandledMatchError;
 
 class Vcalendar extends Component
 {
     public const NAME = 'VCALENDAR';
     public const VERSION = '2.0';
 
-    protected const CARDINALITY = [
-        self::PROPERTY_CALSCALE => self::CARDINALITY_ONE_MAY,
+    public const PROPERTY_NAME = 'NAME';
+    public const PROPERTY_REFRESH_INTERVAL = 'REFRESH-INTERVAL';
+    public const PROPERTY_SOURCE = 'SOURCE';
+
+    public const CARDINALITY = [
+        self::PROPERTY_CALENDAR_SCALE => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_CATEGORIES => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_COLOR => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_CONFERENCE => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_DESCRIPTION => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_IMAGE => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_LAST_MODIFIED => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_METHOD => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_NAME => self::CARDINALITY_ONE_OR_MORE_MAY,
         self::PROPERTY_PRODID => self::CARDINALITY_ONE_MUST,
+        self::PROPERTY_REFRESH_INTERVAL => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_SOURCE => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_UID => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_VERSION => self::CARDINALITY_ONE_MUST,
     ];
 
@@ -33,6 +49,11 @@ class Vcalendar extends Component
     private const LINE_REGEX = '/^([-A-Z]+)((;[-A-Z]+=(".+"|.+?))*):(.+)$/';
     private const VALUE_SPLIT_REGEX = '/(?<!\\\),/';
 
+    /**
+     * @var list<string> $nonStandardComponents
+     */
+    protected static array $nonStandardComponents = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -40,6 +61,13 @@ class Vcalendar extends Component
         $this->properties = [
             self::PROPERTY_VERSION => [new Property(self::PROPERTY_VERSION, self::VERSION)]
         ];
+    }
+
+    public static function registerNonStandardComponent(string $name): void
+    {
+        if (!in_array($name, self::$nonStandardComponents, true)) {
+            self::$nonStandardComponents[] = $name;
+        }
     }
 
     public static function import(string $icalendar): Vcalendar
@@ -50,7 +78,7 @@ class Vcalendar extends Component
         self::$lines = explode("\n", $icalendar);
 
         if (array_shift(self::$lines) !== Component::BEGIN . Property::PROPERTY_SEPARATOR . self::NAME) {
-            throw new InvalidArgumentException('Invalid iCalendar');
+            throw new InvalidComponentException();
         }
 
         return self::importComponent(new Vcalendar());
@@ -62,16 +90,20 @@ class Vcalendar extends Component
             $line = array_shift(self::$lines);
 
             if (str_starts_with($line, Component::BEGIN . Property::PROPERTY_SEPARATOR)) {
-                $childComponent = match (substr($line, 6)) {
-                    Daylight::NAME => new Daylight(),
-                    Standard::NAME => new Standard(),
-                    Valarm::NAME => new Valarm(),
-                    Vevent::NAME => new Vevent(),
-                    Vfreebusy::NAME => new Vfreebusy(),
-                    Vjournal::NAME => new Vjournal(),
-                    Vtimezone::NAME => new Vtimezone(),
-                    Vtodo::NAME => new Vtodo()
-                };
+                try {
+                    $childComponent = match (substr($line, 6)) {
+                        Daylight::NAME => new Daylight(),
+                        Standard::NAME => new Standard(),
+                        Valarm::NAME => new Valarm(),
+                        Vevent::NAME => new Vevent(),
+                        Vfreebusy::NAME => new Vfreebusy(),
+                        Vjournal::NAME => new Vjournal(),
+                        Vtimezone::NAME => new Vtimezone(),
+                        Vtodo::NAME => new Vtodo()
+                    };
+                } catch (UnhandledMatchError $e) {
+                    throw new InvalidComponentException($component, new Vcalendar());
+                }
                 $component = $component->addComponent(self::importComponent($childComponent));
             } elseif (str_starts_with($line, Component::END . Property::PROPERTY_SEPARATOR)) {
                 return $component;
@@ -85,7 +117,7 @@ class Vcalendar extends Component
     {
         $property = [];
         if (!preg_match(self::LINE_REGEX, $line, $property)) {
-            throw new InvalidArgumentException("Invalid iCalendar property: $line");
+            throw new InvalidPropertyException($component, $line, 3);
         }
 
         if (!empty($property[2])) {
@@ -93,7 +125,7 @@ class Vcalendar extends Component
             $values = [];
 
             foreach (explode(Property::PARAMETER_SEPARATOR, substr($property[2], 1)) as $parameter) {
-                list($keys[], $values[]) = explode(Property::EQUALS, $parameter);
+                [$keys[], $values[]] = explode(Property::EQUALS, $parameter);
             }
 
             $parameters = array_combine($keys, $values);
@@ -101,11 +133,24 @@ class Vcalendar extends Component
             $parameters = [];
         }
 
-        return $component->addProperty(
-            $property[1],
-            self::parseValue($property[1], $property[5]),
-            $parameters
-        );
+        if ($property[1] === Vcalendar::PROPERTY_VERSION) {
+            return $component
+                ->setProperty(
+                    $property[1],
+                    0,
+                    self::parseValue($property[1], $property[5]),
+                    $parameters
+                )
+            ;
+        }
+
+        return $component
+            ->addProperty(
+                $property[1],
+                self::parseValue($property[1], $property[5]),
+                $parameters
+            )
+        ;
     }
 
     public static function parseValue(string $name, string $value): array|string
@@ -123,7 +168,7 @@ class Vcalendar extends Component
         $values = [];
 
         foreach (preg_split(self::VALUE_SPLIT_REGEX, $value) as $item) {
-            list($keys[], $values[]) = explode(Vfreebusy::FREEBUSY_SEPARATOR, $item);
+            [$keys[], $values[]] = explode(Vfreebusy::FREEBUSY_SEPARATOR, $item);
         }
 
         return array_combine($keys, $values);
@@ -133,7 +178,7 @@ class Vcalendar extends Component
     {
         $result = preg_split(self::VALUE_SPLIT_REGEX, $value);
 
-        return sizeof($result) === 1 ? $result[0] : $result;
+        return count($result) === 1 ? $result[0] : $result;
     }
 
     public static function rrule(string $value): array
@@ -142,7 +187,7 @@ class Vcalendar extends Component
         $values = [];
 
         foreach (explode(Property::RECUR_SEPARATOR, $value) as $item) {
-            list($keys[], $values[]) = explode(Property::EQUALS, $item);
+            [$keys[], $values[]] = explode(Property::EQUALS, $item);
         }
 
         foreach ($values as &$v) {
@@ -150,5 +195,16 @@ class Vcalendar extends Component
         }
 
         return array_combine($keys, $values);
+    }
+
+    protected function checkComponentValid(Component $component): void
+    {
+        if (!in_array(
+            $component->getName(),
+            array_merge(static::COMPONENTS, self::$nonStandardComponents),
+            true
+        )) {
+            throw new InvalidComponentException($this, $component);
+        }
     }
 }

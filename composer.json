@@ -1,10 +1,11 @@
 {
     "name": "beastbytes/icalendar",
     "type": "library",
-    "description": "Create and parse iCalendar",
+    "description": "Create, edit, and import iCalendar",
     "keywords": [
         "icalendar",
-        "RFC 5545"
+        "RFC 5545",
+        "RFC 7986"
     ],
     "require": {
         "php": "^8.0",

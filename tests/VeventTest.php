@@ -28,9 +28,9 @@ class VeventTest extends TestCase
             [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123401@example.com')
-                    ->addProperty(Vevent::PROPERTY_DTSTAMP, '19970901T130000Z')
-                    ->addProperty(Vevent::PROPERTY_DTSTART, '19970903T163000Z')
-                    ->addProperty(Vevent::PROPERTY_DTEND, '19970903T190000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_START, '19970903T163000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_END, '19970903T190000Z')
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Annual Employee Review')
                     ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_PRIVATE)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['BUSINESS', 'HUMAN RESOURCES'])
@@ -50,13 +50,13 @@ class VeventTest extends TestCase
             [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123402@example.com')
-                    ->addProperty(Vevent::PROPERTY_DTSTAMP, '19970901T130000Z')
-                    ->addProperty(Vevent::PROPERTY_DTSTART, '19970401T163000Z')
-                    ->addProperty(Vevent::PROPERTY_DTEND, '19970402T010000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_START, '19970401T163000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_END, '19970402T010000Z')
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Laurel is in sensitivity awareness class.')
                     ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_PUBLIC)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['BUSINESS', 'HUMAN RESOURCES'])
-                    ->addProperty(Vevent::PROPERTY_TRANSP, Vevent::TRANSP_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                 ,
                 [
                     'BEGIN:VEVENT',
@@ -74,16 +74,16 @@ class VeventTest extends TestCase
             [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123403@example.com')
-                    ->addProperty(Vevent::PROPERTY_DTSTAMP, '19970901T130000Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
                     ->addProperty(
-                        Vevent::PROPERTY_DTSTART,
+                        Vevent::PROPERTY_DATETIME_START,
                         '19970901T130000Z',
                         [
                             Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Our Blissful Anniversary')
-                    ->addProperty(Vevent::PROPERTY_TRANSP, Vevent::TRANSP_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                     ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_CONFIDENTIAL)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['ANNIVERSARY', 'PERSONAL', 'SPECIAL OCCASION'])
                     ->addProperty(Vevent::PROPERTY_RRULE, [Vevent::RRULE_FREQ => Vevent::FREQUENCY_YEARLY])
@@ -104,23 +104,23 @@ class VeventTest extends TestCase
             [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '20070423T123432Z-541111@example.com')
-                    ->addProperty(Vevent::PROPERTY_DTSTAMP, '20070423T123432Z')
+                    ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '20070423T123432Z')
                     ->addProperty(
-                        Vevent::PROPERTY_DTSTART,
+                        Vevent::PROPERTY_DATETIME_START,
                         '20070628',
                         [
                             Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(
-                        Vevent::PROPERTY_DTEND,
+                        Vevent::PROPERTY_DATETIME_END,
                         '20070709',
                         [
                             Vevent::PARAMETER_VALUE => Vevent::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Festival International de Jazz de Montreal')
-                    ->addProperty(Vevent::PROPERTY_TRANSP, Vevent::TRANSP_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                 ,
                 [
                     'BEGIN:VEVENT',

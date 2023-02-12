@@ -40,7 +40,7 @@ class ValarmTest extends TestCase
                         Valarm::PROPERTY_ATTACH,
                         'ftp://example.com/pub/sounds/bell-01.aud',
                         [
-                            Valarm::PARAMETER_FMTTYPE => 'audio/basic'
+                            Valarm::PARAMETER_FORMAT_TYPE => 'audio/basic'
                         ]
                     )
                 ,
@@ -95,7 +95,7 @@ class ValarmTest extends TestCase
                         Valarm::PROPERTY_ATTACH,
                         'http://example.com/templates/agenda.doc',
                         [
-                            Valarm::PARAMETER_FMTTYPE => 'application/msword'
+                            Valarm::PARAMETER_FORMAT_TYPE => 'application/msword'
                         ]
                     )
                 ,

@@ -34,9 +34,9 @@ class CreateIcalendarTest extends TestCase
                     ->addProperty(Vcalendar::PROPERTY_PRODID, '-//RDU Software//NONSGML HandCal//EN')
                     ->addComponent((new Vevent())
                         ->addProperty(Vevent::PROPERTY_UID, '19970610T172345Z-AF23B2@example.com')
-                        ->addProperty(Vevent::PROPERTY_DTSTAMP, '19970610T172345Z')
-                        ->addProperty(Vevent::PROPERTY_DTSTART, '19970714T170000Z')
-                        ->addProperty(Vevent::PROPERTY_DTEND, '19970715T040000Z')
+                        ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970610T172345Z')
+                        ->addProperty(Vevent::PROPERTY_DATETIME_START, '19970714T170000Z')
+                        ->addProperty(Vevent::PROPERTY_DATETIME_END, '19970715T040000Z')
                         ->addProperty(Vevent::PROPERTY_SUMMARY, 'Bastille Day Party')
                     ),
                 [
@@ -57,15 +57,17 @@ class CreateIcalendarTest extends TestCase
                 (new Vcalendar())
                     ->addProperty(Vcalendar::PROPERTY_PRODID, '-//RDU Software//NONSGML HandCal//EN')
                     ->addComponent((new Vfreebusy())
+                        ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T115957Z-76A912@example.com')
+                        ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T120000Z')
                         ->addProperty(
                             Vfreebusy::PROPERTY_ORGANIZER,
                             'mailto:jsmith@example.com',
                             [
-                                Vfreebusy::PARAMETER_CN => '"John Smith"'
+                                Vfreebusy::PARAMETER_COMMON_NAME => '"John Smith"'
                             ]
                         )
-                        ->addProperty(Vfreebusy::PROPERTY_DTSTART, '19980313T141711Z')
-                        ->addProperty(Vfreebusy::PROPERTY_DTEND, '19980410T141711Z')
+                        ->addProperty(Vfreebusy::PROPERTY_DATETIME_START, '19980313T141711Z')
+                        ->addProperty(Vfreebusy::PROPERTY_DATETIME_END, '19980410T141711Z')
                         ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, '19980314T233000Z/19980315T003000Z')
                         ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, '19980316T153000Z/19980316T163000Z')
                         ->addProperty(Vfreebusy::PROPERTY_FREEBUSY, '19980318T030000Z/19980318T040000Z')
@@ -79,6 +81,8 @@ class CreateIcalendarTest extends TestCase
                     'VERSION:2.0',
                     'PRODID:-//RDU Software//NONSGML HandCal//EN',
                     'BEGIN:VFREEBUSY',
+                    'UID:19970901T115957Z-76A912@example.com',
+                    'DTSTAMP:19970901T120000Z',
                     'ORGANIZER;CN="John Smith":mailto:jsmith@example.com',
                     'DTSTART:19980313T141711Z',
                     'DTEND:19980410T141711Z',
@@ -94,7 +98,7 @@ class CreateIcalendarTest extends TestCase
                 (new Vcalendar())
                     ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
                     ->addComponent((new Vtodo())
-                        ->addProperty(Vtodo::PROPERTY_DTSTAMP, '19980130T134500Z')
+                        ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '19980130T134500Z')
                         ->addProperty(Vtodo::PROPERTY_SEQUENCE, 2)
                         ->addProperty(Vtodo::PROPERTY_UID, 'uid4@example.com')
                         ->addProperty(Vtodo::PROPERTY_ORGANIZER, 'mailto:unclesam@example.com')
@@ -102,7 +106,7 @@ class CreateIcalendarTest extends TestCase
                            Vtodo::PROPERTY_ATTENDEE,
                            'mailto:jqpublic@example.com',
                             [
-                                Vtodo::PARAMETER_PARTSTAT => Vtodo::PARTICIPANT_ACCEPTED
+                                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
                             ]
                         )
                         ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
@@ -115,7 +119,7 @@ class CreateIcalendarTest extends TestCase
                                Valarm::PROPERTY_ATTACH,
                                'http://example.com/pub/audio-files/ssbanner.aud',
                                 [
-                                    Valarm::PARAMETER_FMTTYPE => 'audio/basic'
+                                    Valarm::PARAMETER_FORMAT_TYPE => 'audio/basic'
                                 ]
                             )
                             ->addProperty(Valarm::PROPERTY_REPEAT, 4)
@@ -150,7 +154,7 @@ class CreateIcalendarTest extends TestCase
                 (new Vcalendar())
                     ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
                     ->addComponent((new Vjournal())
-                        ->addProperty(Vjournal::PROPERTY_DTSTAMP, '19970324T120000Z')
+                        ->addProperty(Vjournal::PROPERTY_DATETIME_STAMP, '19970324T120000Z')
                         ->addProperty(Vjournal::PROPERTY_UID, 'uid5@example.com')
                         ->addProperty(Vjournal::PROPERTY_ORGANIZER, 'mailto:jsmith@example.com')
                         ->addProperty(Vjournal::PROPERTY_STATUS, Vjournal::STATUS_DRAFT)

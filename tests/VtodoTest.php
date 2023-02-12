@@ -27,7 +27,7 @@ class VtodoTest extends TestCase
             [
                 (new Vtodo())
                     ->addProperty(Vtodo::PROPERTY_UID, '20070313T123432Z-456553@example.com')
-                    ->addProperty(Vtodo::PROPERTY_DTSTAMP, '20070313T123432Z')
+                    ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070313T123432Z')
                     ->addProperty(
                         Vtodo::PROPERTY_DUE,
                         '20070501',
@@ -55,8 +55,8 @@ class VtodoTest extends TestCase
             [
                 (new Vtodo())
                     ->addProperty(Vtodo::PROPERTY_UID,'20070514T103211Z-123404@example.com')
-                    ->addProperty(Vtodo::PROPERTY_DTSTAMP, '20070514T103211Z')
-                    ->addProperty(Vtodo::PROPERTY_DTSTART, '20070514T110000Z')
+                    ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070514T103211Z')
+                    ->addProperty(Vtodo::PROPERTY_DATETIME_START, '20070514T110000Z')
                     ->addProperty(Vtodo::PROPERTY_DUE, '20070709T130000Z')
                     ->addProperty(Vtodo::PROPERTY_COMPLETED,'20070707T100000Z')
                     ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Revised Internet-Draft')

@@ -18,15 +18,15 @@ class Vfreebusy extends Component
     public const TIME_TYPE_BUSY_UNAVAILABLE = 'BUSY-UNAVAILABLE';
     public const TIME_TYPE_FREE = 'FREE';
 
-    protected const CARDINALITY = [
+    public const CARDINALITY = [
         self::PROPERTY_ATTENDEE => self::CARDINALITY_ONE_OR_MORE_MAY,
         self::PROPERTY_COMMENT => self::CARDINALITY_ONE_OR_MORE_MAY,
         self::PROPERTY_CONTACT => self::CARDINALITY_ONE_MAY,
-        self::PROPERTY_DTEND => self::CARDINALITY_ONE_MAY,
-        self::PROPERTY_DTSTAMP => self::CARDINALITY_ONE_MUST,
-        self::PROPERTY_DTSTART => self::CARDINALITY_ONE_MAY,
-        self::PROPERTY_ORGANIZER => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_DATETIME_END => self::CARDINALITY_ONE_MAY,
+        self::PROPERTY_DATETIME_STAMP => self::CARDINALITY_ONE_MUST,
+        self::PROPERTY_DATETIME_START => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_FREEBUSY => self::CARDINALITY_ONE_OR_MORE_MAY,
+        self::PROPERTY_ORGANIZER => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_UID => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_URL => self::CARDINALITY_ONE_MAY,

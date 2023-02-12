@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace BeastBytes\ICalendar;
 
-use InvalidArgumentException;
-use RuntimeException;
+use BeastBytes\ICalendar\Exception\InvalidPropertyException;
+use BeastBytes\ICalendar\Exception\MissingPropertyException;
 
 class Valarm extends Component
 {
@@ -20,14 +20,11 @@ class Valarm extends Component
     public const PROPERTY_ACTION = 'ACTION';
     public const PROPERTY_TRIGGER = 'TRIGGER';
 
-    protected const CARDINALITY = [
+    public const CARDINALITY = [
         self::PROPERTY_ACTION => self::CARDINALITY_ONE_MUST,
-        self::PROPERTY_ATTENDEE => self::CARDINALITY_ONE_OR_MORE_MUST,
-        self::PROPERTY_DESCRIPTION => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_DURATION => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_REPEAT => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_REQUEST_STATUS => self::CARDINALITY_ONE_MAY,
-        self::PROPERTY_SUMMARY => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_TRIGGER => self::CARDINALITY_ONE_MUST,
     ];
 
@@ -55,27 +52,49 @@ class Valarm extends Component
         ]
     ];
 
-    protected function cardinality(string $name): string
+    private array $propertyCardinality = [];
+
+    public function getCardinality(string $property): string
     {
-        if ($name === self::PROPERTY_ATTACH) {
-            $cardinality = match ($this->getProperty(self::PROPERTY_ACTION, 0)->getValue()) {
-                self::ACTION_AUDIO => self::CARDINALITY_ONE_MAY,
-                self::ACTION_EMAIL => self::CARDINALITY_ONE_OR_MORE_MAY,
-                default => null
-            };
-
-            if ($cardinality === null) {
-                throw new RuntimeException(
-                    'Unable to determine cardinality for '
-                    . self::NAME . '::' . self::PROPERTY_ATTACH
-                    . ' - ensure ' . self::NAME . '::' . self::PROPERTY_ACTION . ' is set.'
-                );
-            }
-
-            return $cardinality;
+        if (
+            in_array($property, self::PROPERTIES[self::ACTION_EMAIL], true)
+            && !$this->hasProperty(self::PROPERTY_ACTION)
+        ) {
+            return '';
         }
 
-        return self::CARDINALITY[$name];
+        return match ($property) {
+            self::PROPERTY_ATTACH => match (
+                $this->getProperty(self::PROPERTY_ACTION, 0)
+                     ->getValue()
+            ) {
+                self::ACTION_AUDIO => self::CARDINALITY_ONE_MAY,
+                self::ACTION_EMAIL => self::CARDINALITY_ONE_OR_MORE_MAY,
+                default => ''
+            },
+            self::PROPERTY_ATTENDEE => match (
+                $this->getProperty(self::PROPERTY_ACTION, 0)
+                     ->getValue()
+            ) {
+                self::ACTION_EMAIL => self::CARDINALITY_ONE_OR_MORE_MUST,
+                default => ''
+            },
+            self::PROPERTY_DESCRIPTION => match (
+                $this->getProperty(self::PROPERTY_ACTION, 0)
+                     ->getValue()
+            ) {
+                self::ACTION_DISPLAY, self::ACTION_EMAIL => self::CARDINALITY_ONE_MUST,
+                default => ''
+            },
+            self::PROPERTY_SUMMARY => match (
+                $this->getProperty(self::PROPERTY_ACTION, 0)
+                     ->getValue()
+            ) {
+                self::ACTION_EMAIL => self::CARDINALITY_ONE_MUST,
+                default => ''
+            },
+            default => self::CARDINALITY[$property]
+        };
     }
 
     protected function checkPropertyValid(string $name): void
@@ -86,18 +105,38 @@ class Valarm extends Component
                 ? self::PROPERTIES[$this->getProperty(self::PROPERTY_ACTION, 0)->getValue()]
                 : []
             ,
-            self::$ianaProperties,
-            self::$xProperties
+            self::$nonStandardProperties
         );
 
         if (!in_array($name, $properties)) {
-            throw new InvalidArgumentException(strtr(
-                '<property> not a valid property of <component>',
-                [
-                    '<property>' => $name,
-                    '<component>' => $this->getName()
-                ]
-            ));
+            if (
+                $this->hasProperty(self::PROPERTY_ACTION)
+                && in_array($name, self::PROPERTIES[self::ACTION_EMAIL], true) // contains all possibilities
+            ) {
+                throw new InvalidPropertyException($this, $name, 1);
+            }
+
+            throw new InvalidPropertyException($this, $name);
+        }
+    }
+
+    protected function hasRequiredProperties(): void
+    {
+        if (empty($this->propertyCardinality)) {
+            $this->propertyCardinality = static::CARDINALITY;
+
+            foreach (self::PROPERTIES[self::ACTION_EMAIL] as $property) {
+                $this->propertyCardinality[$property] = $this->getCardinality($property);
+            }
+        }
+
+        foreach ($this->propertyCardinality as $property => $cardinality) {
+            if (
+                in_array($cardinality, [self::CARDINALITY_ONE_MUST, self::CARDINALITY_ONE_OR_MORE_MUST])
+                && !$this->hasProperty($property)
+            ) {
+                throw new MissingPropertyException($this, $property);
+            }
         }
     }
 }
