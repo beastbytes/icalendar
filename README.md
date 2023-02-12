@@ -11,46 +11,19 @@ Finally, call the Vcalendar's render() method.
 
 All iCalendar components are immutable.
 
-### Example
-The following example creates a To-Do with an alarm (it is the example on page 146 of RFC5545).
+### UIDs
+VEVENT, VFREEBUSY, VJOURNAL, and VTODO components require the UID property;since RFC 7985 it can also be set in VCALENDAR. RFC 7985 udates the recommendation on how to construct the value; it deprecates the use of IP addresses and host and domain names due particularly due privacy and security concerns, and recommends use of Universally Unique Identifier (UUID) values as defined in Sections [4.4](https://datatracker.ietf.org/doc/html/rfc4122#section-4.4) and [4.5](https://datatracker.ietf.org/doc/html/rfc4122#section-4.5) of [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122). 
+
+The library provides a helper method that generates V4 UUIDs.
 
 ```php
-$iCalendar = (new Vcalendar())
-    ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
-    ->addComponent((new Vtodo())
-        ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '19980130T134500Z')
-        ->addProperty(Vtodo::PROPERTY_SEQUENCE, 2)
-        ->addProperty(Vtodo::PROPERTY_UID, 'uid4@example.com')
-        ->addProperty(Vtodo::PROPERTY_ORGANIZER, 'mailto:unclesam@example.com')
-        ->addProperty(
-            Vtodo::PROPERTY_ATTENDEE,
-            'mailto:jqpublic@example.com',
-            [
-                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
-            ]
-        )
-        ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
-        ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
-        ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Income Taxes')
-        ->addComponent((new Valarm())
-            ->addProperty(Valarm::PROPERTY_ACTION, Valarm::ACTION_AUDIO)
-            ->addProperty(Valarm::PROPERTY_TRIGGER, '19980403T120000Z')
-            ->addProperty(
-                Valarm::PROPERTY_ATTACH,
-                'http://example.com/pub/audio-files/ssbanner.aud',
-                [
-                    Valarm::PARAMETER_FORMAT_TYPE => 'audio/basic'
-                ]
-            )
-            ->addProperty(Valarm::PROPERTY_REPEAT, 4)
-            ->addProperty(Valarm::PROPERTY_DURATION, 'PT1H')
-        )
+$vCalendar = (new Vcalendar())
+    ->addProperty(Vcalendar::PROPERTY_UID, Vcalendar::uuidv4())
+    ->addComponent((new Vevent())
+        ->addProperty(Vevent::PROPERTY_UID, Vevent::uuidv4())
     )
-    ->render()
 ;
 ```
-
-See tests for more examples.
 
 ### Non-standard Components
 IANA and X- components can be added to the iCalender object (Vcalendar).
@@ -90,6 +63,47 @@ Vevent::registerNonStandardProperty(self::NON_STANDARD_PROPERTY, Vevent::CARDINA
 $vEvent = (new Vevent())->addProperty(self::NON_STANDARD_PROPERTY, $value);
 // $vEvent->hasProperty(self::NON_STANDARD_PROPERTY) === true;
 ```
+
+### Example
+The following example creates a To-Do with an alarm (it is the example on page 146 of RFC5545 modified to use UUID V4 for UID).
+
+```php
+$iCalendar = (new Vcalendar())
+    ->addProperty(Vcalendar::PROPERTY_PRODUCT_IDENTIFIER, '-//ABC Corporation//NONSGML My Product//EN')
+    ->addComponent((new Vtodo())
+        ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '19980130T134500Z')
+        ->addProperty(Vtodo::PROPERTY_SEQUENCE, 2)
+        ->addProperty(Vtodo::PROPERTY_UID, Vtodo::uuidv4())
+        ->addProperty(Vtodo::PROPERTY_ORGANIZER, 'mailto:unclesam@example.com')
+        ->addProperty(
+            Vtodo::PROPERTY_ATTENDEE,
+            'mailto:jqpublic@example.com',
+            [
+                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
+            ]
+        )
+        ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
+        ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
+        ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Income Taxes')
+        ->addComponent((new Valarm())
+            ->addProperty(Valarm::PROPERTY_ACTION, Valarm::ACTION_AUDIO)
+            ->addProperty(Valarm::PROPERTY_TRIGGER, '19980403T120000Z')
+            ->addProperty(
+                Valarm::PROPERTY_ATTACH,
+                'http://example.com/pub/audio-files/ssbanner.aud',
+                [
+                    Valarm::PARAMETER_FORMAT_TYPE => 'audio/basic'
+                ]
+            )
+            ->addProperty(Valarm::PROPERTY_REPEAT, 4)
+            ->addProperty(Valarm::PROPERTY_DURATION, 'PT1H')
+        )
+    )
+    ->render()
+;
+```
+
+See tests for more examples.
 
 ## Edit iCalendar
 iCalendar components can be edited, for example when updating a Vevent.

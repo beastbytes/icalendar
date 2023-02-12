@@ -38,7 +38,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19670430T020000')
                         ->addProperty(
-                            Daylight::PROPERTY_RRULE,
+                            Daylight::PROPERTY_RECURRENCE_RULE,
                             [
                                 Daylight::RRULE_FREQ => Daylight::FREQUENCY_YEARLY,
                                 Daylight::RRULE_BY_MONTH => Daylight::APRIL,
@@ -53,7 +53,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DATETIME_START, '19671029T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_MONTH => Standard::OCTOBER,
@@ -75,7 +75,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19760425T020000')
                         ->addProperty(
-                            Daylight::PROPERTY_RRULE,
+                            Daylight::PROPERTY_RECURRENCE_RULE,
                             [
                                 Daylight::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Daylight::RRULE_BY_MONTH => Standard::APRIL,
@@ -90,7 +90,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19870405T020000')
                         ->addProperty(
-                            Daylight::PROPERTY_RRULE,
+                            Daylight::PROPERTY_RECURRENCE_RULE,
                             [
                                 Daylight::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Daylight::RRULE_BY_MONTH => Standard::APRIL,
@@ -105,7 +105,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '20070311T020000')
                         ->addProperty(
-                            Daylight::PROPERTY_RRULE,
+                            Daylight::PROPERTY_RECURRENCE_RULE,
                             [
                                 Daylight::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Daylight::RRULE_BY_MONTH => Standard::MARCH,
@@ -119,7 +119,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DATETIME_START, '20071104T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_MONTH => Standard::NOVEMBER,
@@ -232,7 +232,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DATETIME_START, '20071104T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_MONTH => Standard::NOVEMBER,
@@ -246,7 +246,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '20070311T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_MONTH => Standard::MARCH,
@@ -286,7 +286,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DATETIME_START, '19671029T020000')
                         ->addProperty(
-                           Standard::PROPERTY_RRULE,
+                           Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_DAY => -1 . Standard::SUNDAY,
@@ -300,7 +300,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19870405T020000')
                         ->addProperty(
-                            Daylight::PROPERTY_RRULE,
+                            Daylight::PROPERTY_RECURRENCE_RULE,
                             [
                                 Daylight::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Daylight::RRULE_BY_DAY => 1 . Standard::SUNDAY,
@@ -340,7 +340,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($standard
                         ->addProperty(Standard::PROPERTY_DATETIME_START, '19671029T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_DAY => -1 . Standard::SUNDAY,
@@ -354,7 +354,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19870405T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_DAY => 1 . Standard::SUNDAY,
@@ -369,7 +369,7 @@ class VtimezoneTest extends TestCase
                     ->addComponent($daylight
                         ->addProperty(Daylight::PROPERTY_DATETIME_START, '19990424T020000')
                         ->addProperty(
-                            Standard::PROPERTY_RRULE,
+                            Standard::PROPERTY_RECURRENCE_RULE,
                             [
                                 Standard::RRULE_FREQ => Standard::FREQUENCY_YEARLY,
                                 Standard::RRULE_BY_DAY => -1 . Standard::SUNDAY,

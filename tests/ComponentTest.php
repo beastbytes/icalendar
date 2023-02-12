@@ -61,7 +61,7 @@ class ComponentTest extends TestCase
         $this->assertFalse($vcalendar->hasComponent(Vevent::NAME));
 
         $vcalendar = $vcalendar
-            ->addProperty(Vcalendar::PROPERTY_PRODID, 'prodId')
+            ->addProperty(Vcalendar::PROPERTY_PRODUCT_IDENTIFIER, 'prodId')
             ->addComponent(
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '20230202T000102Z')
@@ -130,7 +130,7 @@ class ComponentTest extends TestCase
         $this->assertFalse($vcalendar->hasComponent(Vevent::NAME));
 
         $vcalendar = $vcalendar
-            ->addProperty(Vcalendar::PROPERTY_PRODID, 'prodId')
+            ->addProperty(Vcalendar::PROPERTY_PRODUCT_IDENTIFIER, 'prodId')
             ->addComponent(
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '20230202T000102Z')

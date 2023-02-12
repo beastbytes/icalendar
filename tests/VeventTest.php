@@ -86,7 +86,7 @@ class VeventTest extends TestCase
                     ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                     ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_CONFIDENTIAL)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['ANNIVERSARY', 'PERSONAL', 'SPECIAL OCCASION'])
-                    ->addProperty(Vevent::PROPERTY_RRULE, [Vevent::RRULE_FREQ => Vevent::FREQUENCY_YEARLY])
+                    ->addProperty(Vevent::PROPERTY_RECURRENCE_RULE, [Vevent::RRULE_FREQ => Vevent::FREQUENCY_YEARLY])
                 ,
                 [
                     'BEGIN:VEVENT',

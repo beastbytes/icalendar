@@ -240,7 +240,7 @@ abstract class Component
     public const PROPERTY_DUE = 'DUE';
     public const PROPERTY_DURATION = 'DURATION';
     public const PROPERTY_EXCEPTION_DATE = 'EXDATE';
-    public const PROPERTY_GEO = 'GEO';
+    public const PROPERTY_GEOGRAPHIC_POSITION = 'GEO';
     public const PROPERTY_IMAGE = 'IMAGE';
     public const PROPERTY_LAST_MODIFIED = 'LAST-MODIFIED';
     public const PROPERTY_LOCATION = 'LOCATION';
@@ -248,14 +248,14 @@ abstract class Component
     public const PROPERTY_ORGANIZER = 'ORGANIZER';
     public const PROPERTY_PERCENT_COMPLETE = 'PERCENT-COMPLETE';
     public const PROPERTY_PRIORITY = 'PRIORITY';
-    public const PROPERTY_PRODID = 'PRODID';
+    public const PROPERTY_PRODUCT_IDENTIFIER = 'PRODID';
     public const PROPERTY_RECURRENCE_DATETIME = 'RDATE';
     public const PROPERTY_RECURRENCE_ID = 'RECURRENCE-ID';
     public const PROPERTY_RELATED_TO = 'RELATED-TO';
     public const PROPERTY_REPEAT = 'REPEAT';
     public const PROPERTY_REQUEST_STATUS = 'REQUEST-STATUS';
     public const PROPERTY_RESOURCES = 'RESOURCES';
-    public const PROPERTY_RRULE = 'RRULE';
+    public const PROPERTY_RECURRENCE_RULE = 'RRULE';
     public const PROPERTY_SEQUENCE = 'SEQUENCE';
     public const PROPERTY_STATUS = 'STATUS';
     public const PROPERTY_SUMMARY = 'SUMMARY';

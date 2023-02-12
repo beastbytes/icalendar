@@ -31,7 +31,7 @@ class Vcalendar extends Component
         self::PROPERTY_LAST_MODIFIED => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_METHOD => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_NAME => self::CARDINALITY_ONE_OR_MORE_MAY,
-        self::PROPERTY_PRODID => self::CARDINALITY_ONE_MUST,
+        self::PROPERTY_PRODUCT_IDENTIFIER => self::CARDINALITY_ONE_MUST,
         self::PROPERTY_REFRESH_INTERVAL => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_SOURCE => self::CARDINALITY_ONE_MAY,
         self::PROPERTY_UID => self::CARDINALITY_ONE_MAY,
@@ -157,7 +157,7 @@ class Vcalendar extends Component
     {
         return match ($name) {
             Vfreebusy::PROPERTY_FREEBUSY => self::freebusy($value),
-            self::PROPERTY_RRULE => self::rrule($value),
+            self::PROPERTY_RECURRENCE_RULE => self::rrule($value),
             default => self::property($value)
         };
     }

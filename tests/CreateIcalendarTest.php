@@ -31,7 +31,10 @@ class CreateIcalendarTest extends TestCase
         return [
             'simple_icalendar' => [
                 (new Vcalendar())
-                    ->addProperty(Vcalendar::PROPERTY_PRODID, '-//RDU Software//NONSGML HandCal//EN')
+                    ->addProperty(
+                        Vcalendar::PROPERTY_PRODUCT_IDENTIFIER,
+                        '-//RDU Software//NONSGML HandCal//EN'
+                    )
                     ->addComponent((new Vevent())
                         ->addProperty(Vevent::PROPERTY_UID, '19970610T172345Z-AF23B2@example.com')
                         ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970610T172345Z')
@@ -55,7 +58,10 @@ class CreateIcalendarTest extends TestCase
             ],
             'freebusy' => [
                 (new Vcalendar())
-                    ->addProperty(Vcalendar::PROPERTY_PRODID, '-//RDU Software//NONSGML HandCal//EN')
+                    ->addProperty(
+                        Vcalendar::PROPERTY_PRODUCT_IDENTIFIER,
+                        '-//RDU Software//NONSGML HandCal//EN'
+                    )
                     ->addComponent((new Vfreebusy())
                         ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T115957Z-76A912@example.com')
                         ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T120000Z')
@@ -96,7 +102,10 @@ class CreateIcalendarTest extends TestCase
             ],
             'todo_with_alarm' => [
                 (new Vcalendar())
-                    ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
+                    ->addProperty(
+                        Vcalendar::PROPERTY_PRODUCT_IDENTIFIER,
+                        '-//ABC Corporation//NONSGML My Product//EN'
+                    )
                     ->addComponent((new Vtodo())
                         ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '19980130T134500Z')
                         ->addProperty(Vtodo::PROPERTY_SEQUENCE, 2)
@@ -152,7 +161,10 @@ class CreateIcalendarTest extends TestCase
             ],
             'vjournal' => [
                 (new Vcalendar())
-                    ->addProperty(Vcalendar::PROPERTY_PRODID, '-//ABC Corporation//NONSGML My Product//EN')
+                    ->addProperty(
+                        Vcalendar::PROPERTY_PRODUCT_IDENTIFIER,
+                        '-//ABC Corporation//NONSGML My Product//EN'
+                    )
                     ->addComponent((new Vjournal())
                         ->addProperty(Vjournal::PROPERTY_DATETIME_STAMP, '19970324T120000Z')
                         ->addProperty(Vjournal::PROPERTY_UID, 'uid5@example.com')

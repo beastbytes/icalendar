@@ -19,7 +19,7 @@ class RruleTest extends TestCase
      */
     public function test_rrule($value, $expected)
     {
-        $this->assertSame($expected, (new Property(Component::PROPERTY_RRULE, $value))->render());
+        $this->assertSame($expected, (new Property(Component::PROPERTY_RECURRENCE_RULE, $value))->render());
     }
 
     public function rruleProvider()

@@ -53,7 +53,7 @@ class Property
         switch ($this->getName()) {
             case Vfreebusy::PROPERTY_FREEBUSY:
                 return $this->freebusy();
-            case Component::PROPERTY_RRULE:
+            case Component::PROPERTY_RECURRENCE_RULE:
                 return $this->recur();
             default:
                 return implode(self::LIST_SEPARATOR, $this->value);
