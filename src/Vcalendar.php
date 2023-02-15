@@ -59,7 +59,7 @@ class Vcalendar extends Component
         parent::__construct();
 
         $this->properties = [
-            self::PROPERTY_VERSION => [new Property(self::PROPERTY_VERSION, self::VERSION)]
+            self::PROPERTY_VERSION => [new Property($this, self::PROPERTY_VERSION, self::VERSION)]
         ];
     }
 
@@ -117,7 +117,7 @@ class Vcalendar extends Component
     {
         $property = [];
         if (!preg_match(self::LINE_REGEX, $line, $property)) {
-            throw new InvalidPropertyException($component, $line, 3);
+            throw new InvalidPropertyException($component, $line, code: 3);
         }
 
         if (!empty($property[2])) {
@@ -197,7 +197,7 @@ class Vcalendar extends Component
         return array_combine($keys, $values);
     }
 
-    protected function checkComponentValid(Component $component): void
+    protected function validateComponent(Component $component): void
     {
         if (!in_array(
             $component->getName(),

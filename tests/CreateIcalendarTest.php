@@ -115,10 +115,10 @@ class CreateIcalendarTest extends TestCase
                            Vtodo::PROPERTY_ATTENDEE,
                            'mailto:jqpublic@example.com',
                             [
-                                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
+                                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::STATUS_ACCEPTED
                             ]
                         )
-                        ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
+                        ->addProperty(Vtodo::PROPERTY_DATETIME_DUE, '19980415T000000')
                         ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
                         ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Income Taxes')
                         ->addComponent((new Valarm())
@@ -170,7 +170,7 @@ class CreateIcalendarTest extends TestCase
                         ->addProperty(Vjournal::PROPERTY_UID, 'uid5@example.com')
                         ->addProperty(Vjournal::PROPERTY_ORGANIZER, 'mailto:jsmith@example.com')
                         ->addProperty(Vjournal::PROPERTY_STATUS, Vjournal::STATUS_DRAFT)
-                        ->addProperty(Vjournal::PROPERTY_CLASS, Vjournal::CLASSIFICATION_PUBLIC)
+                        ->addProperty(Vjournal::PROPERTY_CLASSIFICATION, Vjournal::CLASSIFICATION_PUBLIC)
                         ->addProperty(Vjournal::PROPERTY_CATEGORIES, ['Project Report','XYZ','Weekly Meeting'])
                         ->addProperty(
                            Vjournal::PROPERTY_DESCRIPTION,

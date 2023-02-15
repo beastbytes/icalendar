@@ -22,10 +22,14 @@ use BeastBytes\ICalendar\Vtimezone;
 use BeastBytes\ICalendar\Vtodo;
 use PHPUnit\Framework\TestCase;
 
+use Tests\support\PropertyValueTrait;
+
 use function strtr;
 
 class PropertyTest extends TestCase
 {
+    use PropertyValueTrait;
+
     /**
      * @dataProvider invalidPropertyProvider
      */
@@ -67,7 +71,7 @@ class PropertyTest extends TestCase
 
         $this->assertTrue(
             $component
-                ->addProperty($property, random_int(0, 100))
+                ->addProperty($property, $this->getValidValue($component, $property))
                 ->hasProperty($property)
         );
     }
@@ -87,16 +91,7 @@ class PropertyTest extends TestCase
             true
         )) {
             if (!$component->hasProperty($property)) {
-                $value = $property === Valarm::PROPERTY_ACTION
-                    ? array_rand(
-                        array_flip([
-                            Valarm::ACTION_AUDIO,
-                            Valarm::ACTION_DISPLAY,
-                            Valarm::ACTION_EMAIL
-                        ])
-                    )
-                    : random_int(0, 100);
-                $component = $component->addProperty($property, $value);
+                $component = $component->addProperty($property, $this->getValidValue($component, $property));
             }
 
             $this->assertTrue($component->hasProperty($property));
@@ -111,12 +106,12 @@ class PropertyTest extends TestCase
                     ]
                 )
             );
-            $component->addProperty($property, random_int(0, 100));
+            $component->addProperty($property, $this->getValidValue($component, $property));
         } else {
             $n = random_int(2, 7);
 
             for ($i = 0; $i < $n; $i++) {
-                $component = $component->addProperty($property, random_int(0, 100));
+                $component = $component->addProperty($property, $this->getValidValue($component, $property));
             }
 
             $this->assertTrue($component->hasProperty($property));
@@ -139,8 +134,8 @@ class PropertyTest extends TestCase
             true
         )) {
             $component = $component
-                ->addProperty($property, random_int(0, 100))
-                ->addProperty($property, random_int(0, 100))
+                ->addProperty($property, $this->getValidValue($component, $property))
+                ->addProperty($property, $this->getValidValue($component, $property))
             ;
 
             $this->assertTrue(
@@ -165,7 +160,7 @@ class PropertyTest extends TestCase
             $this->assertNull($component->getProperty($property));
         } else {
             if ($property !== Component::PROPERTY_VERSION) {
-                $component = $component->addProperty($property, random_int(0, 100));
+                $component = $component->addProperty($property, $this->getValidValue($component, $property));
             }
 
             $this->assertCount(is_string($action) ? 2 : 1, $component->getProperties());
@@ -254,18 +249,18 @@ class PropertyTest extends TestCase
             Component::PROPERTY_ATTENDEE,
             Component::PROPERTY_CALENDAR_SCALE,
             Component::PROPERTY_CATEGORIES,
-            Component::PROPERTY_CLASS,
+            Component::PROPERTY_CLASSIFICATION,
             Component::PROPERTY_COLOR,
             Component::PROPERTY_COMMENT,
-            Component::PROPERTY_COMPLETED,
+            Component::PROPERTY_DATETIME_COMPLETED,
             Component::PROPERTY_CONFERENCE,
             Component::PROPERTY_CONTACT,
-            Component::PROPERTY_CREATED,
+            Component::PROPERTY_DATETIME_CREATED,
             Component::PROPERTY_DESCRIPTION,
             Component::PROPERTY_DATETIME_END,
             Component::PROPERTY_DATETIME_STAMP,
             Component::PROPERTY_DATETIME_START,
-            Component::PROPERTY_DUE,
+            Component::PROPERTY_DATETIME_DUE,
             Component::PROPERTY_DURATION,
             Component::PROPERTY_EXCEPTION_DATE,
             Component::PROPERTY_GEOGRAPHIC_POSITION,
@@ -290,13 +285,13 @@ class PropertyTest extends TestCase
             Vcalendar::PROPERTY_SOURCE,
             Component::PROPERTY_STATUS,
             Component::PROPERTY_SUMMARY,
-            Component::PROPERTY_TRANSPARENCY,
+            Component::PROPERTY_TIME_TRANSPARENCY,
             Valarm::PROPERTY_TRIGGER,
-            Vtimezone::PROPERTY_TZID,
-            Standard::PROPERTY_TZNAME,
-            Standard::PROPERTY_TZOFFSETFROM,
-            Standard::PROPERTY_TZOFFSETTO,
-            Vtimezone::PROPERTY_TZURL,
+            Vtimezone::PROPERTY_TZ_ID,
+            Standard::PROPERTY_TZ_NAME,
+            Standard::PROPERTY_TZ_OFFSET_FROM,
+            Standard::PROPERTY_TZ_OFFSET_TO,
+            Vtimezone::PROPERTY_TZ_URL,
             Component::PROPERTY_UID,
             Component::PROPERTY_URL,
             Component::PROPERTY_VERSION,
@@ -372,7 +367,7 @@ class PropertyTest extends TestCase
                 }
             } else {
                 foreach (array_keys($component::CARDINALITY) as $property) {
-                    // Vcalendar::VERSION is set in the constructor
+                    // Vcalendar::VERSION is set in the Vcalendar::_construct()
                     if (!$component instanceof Vcalendar && $property !== Vcalendar::PROPERTY_VERSION) {
                         yield [$component, $property, null];
                     }
@@ -392,7 +387,7 @@ class PropertyTest extends TestCase
                 [new Vevent(), Vevent::PROPERTY_DATETIME_STAMP],
                 [new Vfreebusy(), Vfreebusy::PROPERTY_DATETIME_STAMP],
                 [new Vjournal(), Vjournal::PROPERTY_DATETIME_STAMP],
-                [new Vtimezone(), Vtimezone::PROPERTY_TZID],
+                [new Vtimezone(), Vtimezone::PROPERTY_TZ_ID],
                 [new Vtodo(), Vtodo::PROPERTY_DATETIME_STAMP],
             ] as $componentProperty
         ) {

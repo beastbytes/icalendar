@@ -32,7 +32,7 @@ class VeventTest extends TestCase
                     ->addProperty(Vevent::PROPERTY_DATETIME_START, '19970903T163000Z')
                     ->addProperty(Vevent::PROPERTY_DATETIME_END, '19970903T190000Z')
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Annual Employee Review')
-                    ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_PRIVATE)
+                    ->addProperty(Vevent::PROPERTY_CLASSIFICATION, Vevent::CLASSIFICATION_PRIVATE)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['BUSINESS', 'HUMAN RESOURCES'])
                 ,
                 [
@@ -54,9 +54,9 @@ class VeventTest extends TestCase
                     ->addProperty(Vevent::PROPERTY_DATETIME_START, '19970401T163000Z')
                     ->addProperty(Vevent::PROPERTY_DATETIME_END, '19970402T010000Z')
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Laurel is in sensitivity awareness class.')
-                    ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_PUBLIC)
+                    ->addProperty(Vevent::PROPERTY_CLASSIFICATION, Vevent::CLASSIFICATION_PUBLIC)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['BUSINESS', 'HUMAN RESOURCES'])
-                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_TIME_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                 ,
                 [
                     'BEGIN:VEVENT',
@@ -83,8 +83,8 @@ class VeventTest extends TestCase
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Our Blissful Anniversary')
-                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
-                    ->addProperty(Vevent::PROPERTY_CLASS, Vevent::CLASSIFICATION_CONFIDENTIAL)
+                    ->addProperty(Vevent::PROPERTY_TIME_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_CLASSIFICATION, Vevent::CLASSIFICATION_CONFIDENTIAL)
                     ->addProperty(Vevent::PROPERTY_CATEGORIES, ['ANNIVERSARY', 'PERSONAL', 'SPECIAL OCCASION'])
                     ->addProperty(Vevent::PROPERTY_RECURRENCE_RULE, [Vevent::RRULE_FREQ => Vevent::FREQUENCY_YEARLY])
                 ,
@@ -120,7 +120,7 @@ class VeventTest extends TestCase
                         ]
                     )
                     ->addProperty(Vevent::PROPERTY_SUMMARY, 'Festival International de Jazz de Montreal')
-                    ->addProperty(Vevent::PROPERTY_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
+                    ->addProperty(Vevent::PROPERTY_TIME_TRANSPARENCY, Vevent::TRANSPARENCY_TRANSPARENT)
                 ,
                 [
                     'BEGIN:VEVENT',

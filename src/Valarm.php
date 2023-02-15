@@ -97,7 +97,7 @@ class Valarm extends Component
         };
     }
 
-    protected function checkPropertyValid(string $name): void
+    protected function validateProperty(string $name): void
     {
         $properties = array_merge(
             self::PROPERTIES['common'],
@@ -113,7 +113,7 @@ class Valarm extends Component
                 $this->hasProperty(self::PROPERTY_ACTION)
                 && in_array($name, self::PROPERTIES[self::ACTION_EMAIL], true) // contains all possibilities
             ) {
-                throw new InvalidPropertyException($this, $name, 1);
+                throw new InvalidPropertyException($this, $name, code: 1);
             }
 
             throw new InvalidPropertyException($this, $name);

@@ -14,7 +14,8 @@ use Throwable;
 
 class InvalidPropertyException extends \RuntimeException
 {
-    public function __construct(Component $component, string $property, int $code = 0, ?Throwable $previous = null)
+    public function __construct(Component $component, string $property, ?string $value = null, int $code = 0, ?Throwable
+$previous = null)
     {
         $message = match ($code) {
             0 => sprintf('%s is not a valid property of %s', $property, $component->getName()),
@@ -26,6 +27,7 @@ class InvalidPropertyException extends \RuntimeException
             ),
             2 => sprintf('%s may only have one of property %s', $component->getName(), $property),
             3 => sprintf('Badly formatted property while importing %s: %s', $component->getName(), $property),
+            4 => sprintf('Invalid value %s for property %s in %s', $value, $property, $component->getName()),
         };
 
         parent::__construct(

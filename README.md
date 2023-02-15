@@ -79,10 +79,10 @@ $iCalendar = (new Vcalendar())
             Vtodo::PROPERTY_ATTENDEE,
             'mailto:jqpublic@example.com',
             [
-                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::PARTICIPANT_ACCEPTED
+                Vtodo::PARAMETER_PARTICIPATION_STATUS => Vtodo::STATUS_ACCEPTED
             ]
         )
-        ->addProperty(Vtodo::PROPERTY_DUE, '19980415T000000')
+        ->addProperty(Vtodo::PROPERTY_DATETIME_DUE, '19980415T000000')
         ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
         ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Income Taxes')
         ->addComponent((new Valarm())

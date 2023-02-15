@@ -186,6 +186,11 @@ abstract class Component
     public const DATA_TYPE_URI = 'URI';
     public const DATA_TYPE_UTC_OFFSET = 'UTC-OFFSET';
 
+    public const DISPLAY_BADGE = 'BADGE';
+    public const DISPLAY_GRAPHIC = 'GRAPHIC';
+    public const DISPLAY_FULLSIZE = 'FULLSIZE';
+    public const DISPLAY_THUMBNAIL = 'THUMBNAIL';
+
     public const FREQUENCY_DAILY = 'DAILY';
     public const FREQUENCY_HOURLY = 'HOURLY';
     public const FREQUENCY_MINUTELY = 'MINUTELY';
@@ -200,9 +205,13 @@ abstract class Component
     public const PARAMETER_DELEGATED_FROM = 'DELEGATED-FROM';
     public const PARAMETER_DELEGATED_TO = 'DELEGATED-TO';
     public const PARAMETER_DIR = 'DIR';
+    public const PARAMETER_DISPLAY = 'DISPLAY';
+    public const PARAMETER_EMAIL = 'EMAIL';
     public const PARAMETER_ENCODING = 'ENCODING';
+    public const PARAMETER_FEATURE = 'FEATURE';
     public const PARAMETER_FORMAT_TYPE = 'FMTTYPE';
     public const PARAMETER_FREEBUSY_TIME_TYPE = 'FBTYPE';
+    public const PARAMETER_LABEL = 'LABEL';
     public const PARAMETER_LANGUAGE = 'LANGUAGE';
     public const PARAMETER_MEMBER = 'MEMBER';
     public const PARAMETER_PARTICIPATION_STATUS = 'PARTSTAT';
@@ -215,29 +224,22 @@ abstract class Component
     public const PARAMETER_TIME_ZONE_IDENTIFIER = 'TZID';
     public const PARAMETER_VALUE = 'VALUE';
 
-    public const PARTICIPANT_ACCEPTED = 'ACCEPTED';
-    public const PARTICIPANT_COMPLETED = 'COMPLETED';
-    public const PARTICIPANT_DECLINED = 'DECLINED';
-    public const PARTICIPANT_DELEGATED = 'DELEGATED';
-    public const PARTICIPANT_IN_PROCESS = 'IN-PROCESS';
-    public const PARTICIPANT_NEEDS_ACTION = 'NEEDS-ACTION';
-
     public const PROPERTY_ATTACH = 'ATTACH';
     public const PROPERTY_ATTENDEE = 'ATTENDEE';
     public const PROPERTY_CALENDAR_SCALE = 'CALSCALE';
     public const PROPERTY_CATEGORIES = 'CATEGORIES';
-    public const PROPERTY_CLASS = 'CLASS';
+    public const PROPERTY_CLASSIFICATION = 'CLASS';
     public const PROPERTY_COLOR = 'COLOR';
     public const PROPERTY_COMMENT = 'COMMENT';
-    public const PROPERTY_COMPLETED = 'COMPLETED';
     public const PROPERTY_CONFERENCE = 'CONFERENCE';
     public const PROPERTY_CONTACT = 'CONTACT';
-    public const PROPERTY_CREATED = 'CREATED';
+    public const PROPERTY_DATETIME_COMPLETED = 'COMPLETED';
+    public const PROPERTY_DATETIME_CREATED = 'CREATED';
+    public const PROPERTY_DATETIME_DUE = 'DUE';
     public const PROPERTY_DATETIME_END = 'DTEND';
     public const PROPERTY_DATETIME_STAMP = 'DTSTAMP';
     public const PROPERTY_DATETIME_START = 'DTSTART';
     public const PROPERTY_DESCRIPTION = 'DESCRIPTION';
-    public const PROPERTY_DUE = 'DUE';
     public const PROPERTY_DURATION = 'DURATION';
     public const PROPERTY_EXCEPTION_DATE = 'EXDATE';
     public const PROPERTY_GEOGRAPHIC_POSITION = 'GEO';
@@ -259,7 +261,7 @@ abstract class Component
     public const PROPERTY_SEQUENCE = 'SEQUENCE';
     public const PROPERTY_STATUS = 'STATUS';
     public const PROPERTY_SUMMARY = 'SUMMARY';
-    public const PROPERTY_TRANSPARENCY = 'TRANSP';
+    public const PROPERTY_TIME_TRANSPARENCY = 'TRANSP';
     public const PROPERTY_UID = 'UID';
     public const PROPERTY_URL = 'URL';
     public const PROPERTY_VERSION = 'VERSION';
@@ -290,10 +292,17 @@ abstract class Component
     public const RRULE_UNTIL = 'UNTIL';
     public const RRULE_WKST = 'WKST';
 
+    public const STATUS_ACCEPTED = 'ACCEPTED';
     public const STATUS_CANCELLED = 'CANCELLED';
     public const STATUS_COMPLETED = 'COMPLETED';
+    public const STATUS_CONFIRMED = 'CONFIRMED';
+    public const STATUS_DECLINED = 'DECLINED';
+    public const STATUS_DELEGATED = 'DELEGATED';
+    public const STATUS_DRAFT = 'DRAFT';
+    public const STATUS_FINAL = 'FINAL';
     public const STATUS_IN_PROCESS = 'IN-PROCESS';
     public const STATUS_NEEDS_ACTION = 'NEEDS-ACTION';
+    public const STATUS_TENTATIVE = 'TENTATIVE';
 
     public const TRANSPARENCY_OPAQUE = 'OPAQUE';
     public const TRANSPARENCY_TRANSPARENT = 'TRANSPARENT';
@@ -355,7 +364,7 @@ abstract class Component
 
     public function addComponent(Component $component): self
     {
-        $this->checkComponentValid($component);
+        $this->validateComponent($component);
 
         $new = clone $this;
         $component->setParent($new);
@@ -365,7 +374,7 @@ abstract class Component
 
     public function setComponent(Component $component, int $index): self
     {
-        $this->checkComponentValid($component);
+        $this->validateComponent($component);
 
         $new = clone $this;
         $component->setParent($new);
@@ -375,7 +384,7 @@ abstract class Component
 
     public function addProperty(string $name, array|int|string $value, array $parameters = []): self
     {
-        $this->checkPropertyValid($name);
+        $this->validateProperty($name);
 
         $new = clone $this;
 
@@ -383,17 +392,17 @@ abstract class Component
             in_array($this->getCardinality($name), [self::CARDINALITY_ONE_MAY, self::CARDINALITY_ONE_MUST], true)
             && $new->hasProperty($name)
         ) {
-            throw new InvalidPropertyException($new, $name, 2);
+            throw new InvalidPropertyException($new, $name, code: 2);
         }
 
-        $new->properties[$name][] = new Property($name, $value, $parameters);
+        $new->properties[$name][] = new Property($this, $name, $value, $parameters);
 
         return $new;
     }
 
     public function setProperty(string $name, int $index, array|int|string $value, array $parameters = []): self
     {
-        $this->checkPropertyValid($name);
+        $this->validateProperty($name);
 
         $new = clone $this;
 
@@ -405,7 +414,7 @@ abstract class Component
             $index = 0;
         }
 
-        $new->properties[$name][$index] = new Property($name, $value, $parameters);
+        $new->properties[$name][$index] = new Property($this, $name, $value, $parameters);
 
         return $new;
     }
@@ -594,14 +603,14 @@ abstract class Component
     }
 
 
-    protected function checkComponentValid(Component $component): void
+    protected function validateComponent(Component $component): void
     {
         if (!in_array($component->getName(), static::COMPONENTS, true)) {
             throw new InvalidComponentException($this, $component);
         }
     }
 
-    protected function checkPropertyValid(string $name): void
+    protected function validateProperty(string $name): void
     {
         if (!array_key_exists($name, $this->validProperties)
         ) {

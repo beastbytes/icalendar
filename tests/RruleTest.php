@@ -10,6 +10,7 @@ namespace Tests;
 
 use BeastBytes\ICalendar\Component;
 use BeastBytes\ICalendar\Property;
+use BeastBytes\ICalendar\Vevent;
 use PHPUnit\Framework\TestCase;
 
 class RruleTest extends TestCase
@@ -19,7 +20,11 @@ class RruleTest extends TestCase
      */
     public function test_rrule($value, $expected)
     {
-        $this->assertSame($expected, (new Property(Component::PROPERTY_RECURRENCE_RULE, $value))->render());
+        $this->assertSame(
+            $expected,
+            (new Property(new Vevent(), Component::PROPERTY_RECURRENCE_RULE, $value))
+                ->render()
+        );
     }
 
     public function rruleProvider()

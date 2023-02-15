@@ -29,14 +29,14 @@ class VtodoTest extends TestCase
                     ->addProperty(Vtodo::PROPERTY_UID, '20070313T123432Z-456553@example.com')
                     ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070313T123432Z')
                     ->addProperty(
-                        Vtodo::PROPERTY_DUE,
+                        Vtodo::PROPERTY_DATETIME_DUE,
                         '20070501',
                         [
                             Vtodo::PARAMETER_VALUE => Vtodo::DATA_TYPE_DATE
                         ]
                     )
                     ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Quebec Income Tax Return for 2006')
-                    ->addProperty(Vtodo::PROPERTY_CLASS, Vtodo::CLASSIFICATION_CONFIDENTIAL)
+                    ->addProperty(Vtodo::PROPERTY_CLASSIFICATION, Vtodo::CLASSIFICATION_CONFIDENTIAL)
                     ->addProperty(Vtodo::PROPERTY_CATEGORIES, ['FAMILY', 'FINANCE'])
                     ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
                 ,
@@ -57,8 +57,8 @@ class VtodoTest extends TestCase
                     ->addProperty(Vtodo::PROPERTY_UID,'20070514T103211Z-123404@example.com')
                     ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070514T103211Z')
                     ->addProperty(Vtodo::PROPERTY_DATETIME_START, '20070514T110000Z')
-                    ->addProperty(Vtodo::PROPERTY_DUE, '20070709T130000Z')
-                    ->addProperty(Vtodo::PROPERTY_COMPLETED,'20070707T100000Z')
+                    ->addProperty(Vtodo::PROPERTY_DATETIME_DUE, '20070709T130000Z')
+                    ->addProperty(Vtodo::PROPERTY_DATETIME_COMPLETED, '20070707T100000Z')
                     ->addProperty(Vtodo::PROPERTY_SUMMARY, 'Submit Revised Internet-Draft')
                     ->addProperty(Vtodo::PROPERTY_PRIORITY, 1)
                     ->addProperty(Vtodo::PROPERTY_STATUS, Vtodo::STATUS_NEEDS_ACTION)
