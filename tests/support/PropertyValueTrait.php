@@ -335,7 +335,7 @@ trait PropertyValueTrait
     {
         $interval = random_int(5, 50);
         $units = array_rand(array_flip(['W', 'D', 'H', 'M']));
-        return 'P' . (in_array($units, ['H', 'M']) ? 'T' : '') . $interval;
+        return 'P' . (in_array($units, ['H', 'M']) ? 'T' : '') . $interval . $units;
     }
 
     private function getGeo(): string
