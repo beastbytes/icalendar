@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace BeastBytes\ICalendar;
 
 use BeastBytes\ICalendar\Exception\InvalidPropertyException;
-use InvalidArgumentException;
 
 class Property
 {
@@ -21,8 +20,6 @@ class Property
     public const RECUR_SEPARATOR = ';';
 
     private const LINE_LENGTH = 75;
-
-    private const BOOLEAN = ['FALSE', 'TRUE'];
 
     private const COLORS = [
         Component::COLOR_ALICE_BLUE,
@@ -238,7 +235,7 @@ class Property
     )
     {
         $this->validateValue($name, $value);
-        
+
         if (is_array($value)) {
             $this->value = $value;
         } else {
@@ -351,11 +348,6 @@ class Property
                 throw new InvalidPropertyException($this->component, $property, $value, 4);
             }
         }
-    }
-
-    private function boolean(string $property, string $value): bool
-    {
-        return in_array(strtoupper($value), self::BOOLEAN);
     }
 
     private function datetime(string $property, string $value, array $parameters): bool

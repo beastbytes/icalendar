@@ -362,6 +362,12 @@ abstract class Component
         $this->validProperties = array_merge(static::CARDINALITY, self::$nonStandardProperties);
     }
 
+    // For tests
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
+
     public function addComponent(Component $component): self
     {
         $this->validateComponent($component);

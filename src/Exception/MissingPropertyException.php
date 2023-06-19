@@ -13,10 +13,15 @@ use Throwable;
 
 class MissingPropertyException extends \RuntimeException
 {
+    public const MISSING_PROPERTY_EXCEPTION_MESSAGE = 'Required property "{property}" not set in {component}';
+
     public function __construct(Component $component, string $property, int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct(
-            sprintf('Required property %s not set in %s', $property, $component->getName()),
+            strtr(self::MISSING_PROPERTY_EXCEPTION_MESSAGE, [
+                '{component}' => $component->getName(),
+                '{property}' => $property
+            ]),
             $code,
             $previous
         );
