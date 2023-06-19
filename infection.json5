@@ -1,0 +1,41 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default": true,
+        "DecrementInteger": {
+            "ignore": [
+                "BeastBytes\\ICalendar\\Exception\\MissingPropertyException::__construct",
+                "BeastBytes\\ICalendar\\Exception\\InvalidPropertyException::validateValue::348",
+                "BeastBytes\\ICalendar\\Property::validateValue::348",
+                "BeastBytes\\ICalendar\\Valarm"
+            ]
+        },
+        "IncrementInteger": {
+            "ignore": [
+                "BeastBytes\\ICalendar\\Exception\\MissingPropertyException::__construct",
+                "BeastBytes\\ICalendar\\Exception\\InvalidPropertyException::validateValue::348",
+                "BeastBytes\\ICalendar\\Property::validateValue::348",
+                "BeastBytes\\ICalendar\\Valarm"
+            ]
+        },
+        "LogicalAnd": {
+            "ignore": [
+                // both parent and child are either null or not
+                "BeastBytes\\ICalendar\\Exception\\InvalidComponentException::__construct"
+            ]
+        },
+        "UnwrapArrayMerge" : {
+            "ignore": [
+                "BeastBytes\\ICalendar\\Component::__construct"
+            ]
+        }
+    },
+    "logs": {
+        "text": "logs/infection.log",
+    }
+}
