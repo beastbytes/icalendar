@@ -6,13 +6,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\support;
+namespace BeastBytes\ICalendar\Tests\support;
 
 use BeastBytes\ICalendar\Component;
 
-class NonStandardComponent extends Component
+class UnregisteredNonStandardComponent extends Component
 {
-    public const NAME = 'NONSTANDARDCOMPONENT';
+    public const NAME = 'UNREGISTERED-NON-STANDARD-COMPONENT';
 
     protected const CARDINALITY = [];
 }

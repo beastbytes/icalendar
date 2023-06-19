@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\support;
+namespace BeastBytes\ICalendar\Tests\support;
 
 use BeastBytes\ICalendar\Component;
 use BeastBytes\ICalendar\Property;

@@ -6,25 +6,24 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Vfreebusy;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VfreebusyTest extends TestCase
 {
-    /**
-     * @dataProvider vfreebusyProvider
-     */
+    #[DataProvider('vfreebusyProvider')]
     public function test_vfreebusy($vfreebusy, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $vfreebusy->render());
     }
 
-    public function vfreebusyProvider()
+    public static function vfreebusyProvider()
     {
-        return [
-            [
+        foreach ([
+            '19970901T082949Z-FA43EF@example.com' => [
                 (new Vfreebusy())
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T082949Z-FA43EF@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ORGANIZER, 'mailto:jane_doe@example.com')
@@ -44,7 +43,7 @@ class VfreebusyTest extends TestCase
                     'END:VFREEBUSY'
                 ]
             ],
-            [
+            '19970901T095957Z-76A912@example.com' =>[
                 (new Vfreebusy())
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T095957Z-76A912@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_ORGANIZER, 'mailto:jane_doe@example.com')
@@ -76,7 +75,7 @@ class VfreebusyTest extends TestCase
                     'END:VFREEBUSY'
                 ]
             ],
-            [
+            '19970901T115957Z-76A912@example.com' => [
                 (new Vfreebusy())
                     ->addProperty(Vfreebusy::PROPERTY_UID, '19970901T115957Z-76A912@example.com')
                     ->addProperty(Vfreebusy::PROPERTY_DATETIME_STAMP, '19970901T120000Z')
@@ -101,7 +100,9 @@ class VfreebusyTest extends TestCase
                     'URL:http://www.example.com/calendar/busytime/jsmith.ifb',
                     'END:VFREEBUSY'
                 ]
-            ]
-        ];
+            ],
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

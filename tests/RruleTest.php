@@ -6,18 +6,18 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Component;
 use BeastBytes\ICalendar\Property;
 use BeastBytes\ICalendar\Vevent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RruleTest extends TestCase
 {
-    /**
-     * @dataProvider rruleProvider
-     */
+    #[DataProvider('rruleProvider')]
     public function test_rrule($value, $expected)
     {
         $this->assertSame(
@@ -27,9 +27,9 @@ class RruleTest extends TestCase
         );
     }
 
-    public function rruleProvider()
+    public static function rruleProvider(): \Generator
     {
-        return [
+        foreach ([
             [
                 [
                     Component::RRULE_FREQ => Component::FREQUENCY_DAILY,
@@ -219,6 +219,8 @@ class RruleTest extends TestCase
                 ],
                 'RRULE:FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40'
             ],
-        ];
+        ] as $yield) {
+            yield end($yield) => $yield;
+        }
     }
 }

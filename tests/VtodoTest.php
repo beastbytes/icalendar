@@ -6,25 +6,24 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Vtodo;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VtodoTest extends TestCase
 {
-    /**
-     * @dataProvider vtodoProvider
-     */
+    #[DataProvider('vtodoProvider')]
     public function test_vtodo($vtodo, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $vtodo->render());
     }
 
-    public function vtodoProvider()
+    public static function vtodoProvider(): \Generator
     {
-        return [
-            [
+        foreach ([
+            '20070313T123432Z-456553@example.com' => [
                 (new Vtodo())
                     ->addProperty(Vtodo::PROPERTY_UID, '20070313T123432Z-456553@example.com')
                     ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070313T123432Z')
@@ -52,7 +51,7 @@ class VtodoTest extends TestCase
                     'END:VTODO'
                 ]
             ],
-            [
+           '20070514T103211Z-123404@example.com' => [
                 (new Vtodo())
                     ->addProperty(Vtodo::PROPERTY_UID,'20070514T103211Z-123404@example.com')
                     ->addProperty(Vtodo::PROPERTY_DATETIME_STAMP, '20070514T103211Z')
@@ -76,6 +75,8 @@ class VtodoTest extends TestCase
                     'END:VTODO'
                 ]
             ],
-        ];
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

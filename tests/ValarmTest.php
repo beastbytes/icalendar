@@ -6,24 +6,23 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Valarm;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ValarmTest extends TestCase
 {
-    /**
-     * @dataProvider valarmProvider
-     */
+    #[DataProvider('valarmProvider')]
     public function test_valarm($valarm, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $valarm->render());
     }
 
-    public function valarmProvider()
+    public static function valarmProvider(): \Generator
     {
-        return [
+        foreach ([
             'action_audio' => [
                 (new Valarm())
                     ->addProperty(
@@ -110,6 +109,8 @@ class ValarmTest extends TestCase
                     'END:VALARM'
                 ]
             ]
-        ];
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

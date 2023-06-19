@@ -6,11 +6,13 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
+use BeastBytes\ICalendar\Component;
 use BeastBytes\ICalendar\Daylight;
 use BeastBytes\ICalendar\Exception\InvalidComponentException;
 use BeastBytes\ICalendar\Standard;
+use BeastBytes\ICalendar\Tests\support\UnregisteredNonStandardComponent;
 use BeastBytes\ICalendar\Valarm;
 use BeastBytes\ICalendar\Vcalendar;
 use BeastBytes\ICalendar\Vevent;
@@ -18,21 +20,20 @@ use BeastBytes\ICalendar\Vfreebusy;
 use BeastBytes\ICalendar\Vjournal;
 use BeastBytes\ICalendar\Vtimezone;
 use BeastBytes\ICalendar\Vtodo;
+use BeastBytes\ICalendar\Tests\support\RegisteredNonStandardComponent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Tests\support\NonStandardComponent;
 
 use function strtr;
 
 class ComponentTest extends TestCase
 {
-    /**
-     * @dataProvider invalidComponentProvider
-     */
-    public function test_invalid_component($parent, $child)
+    #[DataProvider('invalidComponentProvider')]
+    public function test_invalid_component(Component $parent, Component $child): void
     {
         $this->expectException(InvalidComponentException::class);
         $this->expectExceptionMessage(strtr(
-            '{child} is not a valid component of {parent}',
+            InvalidComponentException::INVALID_COMPONENT_MESSAGE,
             [
                 '{child}' => $child->getName(),
                 '{parent}' => $parent->getName()
@@ -41,10 +42,8 @@ class ComponentTest extends TestCase
         $parent->addComponent($child);
     }
 
-    /**
-     * @dataProvider validComponentProvider
-     */
-    public function test_valid_component($parent, $child)
+    #[DataProvider('validComponentProvider')]
+    public function test_valid_component(Component $parent, Component $child): void
     {
         $this->assertTrue(
             $parent
@@ -55,7 +54,7 @@ class ComponentTest extends TestCase
         );
     }
 
-    public function test_update_component()
+    public function test_update_component(): void
     {
         $vcalendar = new Vcalendar();
         $this->assertFalse($vcalendar->hasComponent(Vevent::NAME));
@@ -75,8 +74,7 @@ class ComponentTest extends TestCase
                     ->addProperty(Vevent::PROPERTY_UID, Vevent::uuidv4())
                     ->addProperty(Vevent::PROPERTY_SEQUENCE, 0)
                     ->addProperty(Vevent::PROPERTY_DATETIME_START, '20230506T202020Z')
-            )
-        ;
+            );
 
         $this->assertTrue($vcalendar->hasComponent(Vevent::NAME));
         $this->assertCount(2, $vcalendar->getComponent(Vevent::NAME));
@@ -85,8 +83,7 @@ class ComponentTest extends TestCase
 
         $vevent1 = $vevent
             ->setProperty(Vevent::PROPERTY_SEQUENCE, 0, 1)
-            ->setProperty(Vevent::PROPERTY_DATETIME_START, 0,'20230506T181818Z')
-        ;
+            ->setProperty(Vevent::PROPERTY_DATETIME_START, 0, '20230506T181818Z');
 
         $this->assertSame(
             $vevent->getProperty(Vevent::PROPERTY_UID, 0),
@@ -165,11 +162,11 @@ class ComponentTest extends TestCase
     public function test_non_standard_component_not_registered()
     {
         $vCalendar = new Vcalendar();
-        $nonStandardComponent = new NonStandardComponent();
+        $nonStandardComponent = new UnregisteredNonStandardComponent();
 
         $this->expectException(InvalidComponentException::class);
         $this->expectExceptionMessage(strtr(
-            '{child} is not a valid component of {parent}',
+            InvalidComponentException::INVALID_COMPONENT_MESSAGE,
             [
                 '{child}' => $nonStandardComponent->getName(),
                 '{parent}' => $vCalendar->getName()
@@ -181,13 +178,11 @@ class ComponentTest extends TestCase
 
     public function test_non_standard_component()
     {
-        $nonStandardComponent = new NonStandardComponent();
-        Vcalendar::registerNonStandardComponent(NonStandardComponent::NAME);
+        $nonStandardComponent = new RegisteredNonStandardComponent();
+        Vcalendar::registerNonStandardComponent(RegisteredNonStandardComponent::NAME);
 
-        $vCalendar = (new Vcalendar())
-            ->addComponent($nonStandardComponent)
-        ;
-        $this->assertTrue($vCalendar->hasComponent(NonStandardComponent::NAME));
+        $vCalendar = (new Vcalendar())->addComponent($nonStandardComponent);
+        $this->assertTrue($vCalendar->hasComponent(RegisteredNonStandardComponent::NAME));
     }
 
     public function test_uid_generator()
@@ -205,9 +200,9 @@ class ComponentTest extends TestCase
         }
     }
 
-    public function invalidComponentProvider()
+    public static function invalidComponentProvider(): \Generator
     {
-        return [
+        foreach ([
             [new Daylight(), new Daylight()],
             [new Daylight(), new Standard()],
             [new Daylight(), new Valarm()],
@@ -287,12 +282,15 @@ class ComponentTest extends TestCase
             [new Vtodo(), new Vjournal()],
             [new Vtodo(), new Vtimezone()],
             [new Vtodo(), new Vtodo()],
-        ];
+        ] as $yield) {
+            $name = implode('::', $yield);
+            yield $name => $yield;
+        }
     }
 
-    public function validComponentProvider()
+    public static function validComponentProvider(): \Generator
     {
-        return [
+        foreach ([
             [new Vcalendar(), new Vevent()],
             [new Vcalendar(), new Vfreebusy()],
             [new Vcalendar(), new Vjournal()],
@@ -301,6 +299,9 @@ class ComponentTest extends TestCase
             [new Vtimezone(), new Daylight()],
             [new Vtimezone(), new Standard()],
             [new Vtodo(), new Valarm()],
-        ];
+        ] as $yield) {
+            $name = implode('::', $yield);
+            yield $name => $yield;
+        }
     }
 }

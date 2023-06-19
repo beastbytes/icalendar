@@ -6,24 +6,23 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Daylight;
 use BeastBytes\ICalendar\Standard;
 use BeastBytes\ICalendar\Vtimezone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VtimezoneTest extends TestCase
 {
-    /**
-     * @dataProvider vtimezoneProvider
-     */
+    #[DataProvider('vtimezoneProvider')]
     public function test_vtimezone($vtimezone, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $vtimezone->render());
     }
 
-    public function vtimezoneProvider()
+    public static function vtimezoneProvider(): \Generator
     {
         $daylight = new Daylight();
         $standard = new Standard();
@@ -31,8 +30,8 @@ class VtimezoneTest extends TestCase
         $newYorkTimezone = $vTimezone->addProperty(Vtimezone::PROPERTY_TZ_ID, 'America/New_York');
         $fictitiousTimezone = $vTimezone->addProperty(Vtimezone::PROPERTY_TZ_ID, 'Fictitious');
 
-        return [
-            [
+        foreach ([
+            'New York 0' => [
                 $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
                     ->addComponent($daylight
@@ -187,7 +186,7 @@ class VtimezoneTest extends TestCase
                     'END:VTIMEZONE'
                 ]
             ],
-            [
+            'New York 1' => [
                 $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
                     ->addComponent($standard
@@ -222,7 +221,7 @@ class VtimezoneTest extends TestCase
                     'END:VTIMEZONE'
                 ]
             ],
-            [
+            'New York 2' => [
                 $newYorkTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '20050809T050000Z')
                     ->addProperty(
@@ -280,7 +279,7 @@ class VtimezoneTest extends TestCase
                     'END:VTIMEZONE'
                 ]
             ],
-            [
+            'Fictitious 0' => [
                 $fictitiousTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '19870101T000000Z')
                     ->addComponent($standard
@@ -334,7 +333,7 @@ class VtimezoneTest extends TestCase
                     'END:VTIMEZONE'
                 ]
             ],
-            [
+            'Fictitious 1' => [
                 $fictitiousTimezone
                     ->addProperty(Vtimezone::PROPERTY_LAST_MODIFIED, '19870101T000000Z')
                     ->addComponent($standard
@@ -408,7 +407,9 @@ class VtimezoneTest extends TestCase
                     'END:DAYLIGHT',
                     'END:VTIMEZONE'
                 ]
-            ]
-        ];
+            ],
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

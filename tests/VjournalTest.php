@@ -6,25 +6,24 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Vjournal;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VjournalTest extends TestCase
 {
-    /**
-     * @dataProvider vjournalProvider
-     */
+    #[DataProvider('vjournalProvider')]
     public function test_vjournal($vjournal, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $vjournal->render());
     }
 
-    public function vjournalProvider()
+    public static function vjournalProvider(): \Generator
     {
-        return [
-            [
+        foreach ([
+            '19970901T130000Z-123405@example.com' => [
                 (new Vjournal())
                     ->addProperty(Vjournal::PROPERTY_UID, '19970901T130000Z-123405@example.com')
                     ->addProperty(Vjournal::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
@@ -51,6 +50,8 @@ class VjournalTest extends TestCase
                     'END:VJOURNAL'
                 ]
             ],
-        ];
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

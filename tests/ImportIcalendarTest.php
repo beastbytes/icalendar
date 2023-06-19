@@ -6,16 +6,17 @@
 
 declare(strict_types=1);
 
+namespace BeastBytes\ICalendar\Tests;
+
 use BeastBytes\ICalendar\Exception\InvalidComponentException;
 use BeastBytes\ICalendar\Exception\InvalidPropertyException;
 use BeastBytes\ICalendar\Vcalendar;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ImportIcalendarTest extends TestCase
 {
-    /**
-     * @dataProvider invalidIcalendarProvider
-     */
+    #[DataProvider('invalidIcalendarProvider')]
     public function test_invalid_icalendar(string $icalendar)
     {
         $this->expectException(InvalidComponentException::class);
@@ -23,9 +24,7 @@ class ImportIcalendarTest extends TestCase
         Vcalendar::import($icalendar);
     }
 
-    /**
-     * @dataProvider icalendarProvider
-     */
+    #[DataProvider('icalendarProvider')]
     public function test_icalendar_import($icalendar)
     {
         $icalendar = implode("\r\n", $icalendar) . "\r\n";
@@ -35,9 +34,7 @@ class ImportIcalendarTest extends TestCase
         $this->assertSame($icalendar, $imported->render());
     }
 
-    /**
-     * @dataProvider invalidComponentProvider
-     */
+    #[DataProvider('invalidComponentProvider')]
     public function test_invalid_component(array $icalendar, string $parent, string $child)
     {
         $this->expectException(InvalidComponentException::class);
@@ -55,23 +52,29 @@ class ImportIcalendarTest extends TestCase
 
     public function test_badly_formatted_property()
     {
+        $badProperty = 'VERSION;2.0';
         $this->expectException(InvalidPropertyException::class);
-        $this->expectExceptionMessage('Badly formatted property while importing VCALENDAR: VERSION;2.0');
-        Vcalendar::import("BEGIN:VCALENDAR\r\nVERSION;2.0\r\nEND:VCALENDAR\r\n");
+        $this->expectExceptionMessage(strtr(InvalidPropertyException::BADLY_FORMATTED_PROPERTY_MESSAGE, [
+            '{component}' => (new Vcalendar())->getName(),
+            '{property}' => $badProperty
+        ]));
+        Vcalendar::import("BEGIN:VCALENDAR\r\n$badProperty\r\nEND:VCALENDAR\r\n");
     }
 
-    public function invalidIcalendarProvider(): array
+    public static function invalidIcalendarProvider(): \Generator
     {
-        return [
+        foreach ([
             ["BEGIN:VEVENT\n"],
             ["END:VEVENT\n"],
             ["END:VCALENDAR\n"],
-        ];
+        ] as $value) {
+            yield trim($value[0]) => $value;
+        }
     }
 
-    public function icalendarProvider(): array
+    public static function icalendarProvider(): \Generator
     {
-        return [
+        foreach ([
             'simple icalendar' => [
                 [
                     'BEGIN:VCALENDAR',
@@ -148,7 +151,7 @@ class ImportIcalendarTest extends TestCase
                     'END:VCALENDAR'
                 ]
             ],
-            [
+            'timezone' => [
                 [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
@@ -209,7 +212,7 @@ class ImportIcalendarTest extends TestCase
                     'END:VCALENDAR'
                 ]
             ],
-            [
+            'vevent' => [
                 [
                     'BEGIN:VCALENDAR',
                     'VERSION:2.0',
@@ -230,13 +233,15 @@ class ImportIcalendarTest extends TestCase
                     'END:VEVENT',
                     'END:VCALENDAR'
                 ]
-            ]
-        ];
+            ],
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 
-    public function invalidComponentProvider(): array
+    public static function invalidComponentProvider(): \Generator
     {
-        return [
+        foreach ([
             [
                 [
                     'BEGIN:VCALENDAR',
@@ -837,7 +842,9 @@ class ImportIcalendarTest extends TestCase
                 'VTODO',
                 'VTODO',
             ],
-
-        ];
+        ] as $value) {
+            $name = $value[1] . '::' . $value[2];
+            yield $name => $value;
+        }
     }
 }

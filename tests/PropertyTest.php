@@ -6,13 +6,15 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Component;
 use BeastBytes\ICalendar\Daylight;
 use BeastBytes\ICalendar\Exception\InvalidPropertyException;
 use BeastBytes\ICalendar\Exception\MissingPropertyException;
 use BeastBytes\ICalendar\Standard;
+use BeastBytes\ICalendar\Tests\support\PropertyValueTrait;
 use BeastBytes\ICalendar\Valarm;
 use BeastBytes\ICalendar\Vcalendar;
 use BeastBytes\ICalendar\Vevent;
@@ -20,9 +22,8 @@ use BeastBytes\ICalendar\Vfreebusy;
 use BeastBytes\ICalendar\Vjournal;
 use BeastBytes\ICalendar\Vtimezone;
 use BeastBytes\ICalendar\Vtodo;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-
-use Tests\support\PropertyValueTrait;
 
 use function strtr;
 
@@ -30,15 +31,13 @@ class PropertyTest extends TestCase
 {
     use PropertyValueTrait;
 
-    /**
-     * @dataProvider invalidPropertyProvider
-     */
+    #[DataProvider('invalidPropertyProvider')]
     public function test_invalid_property(Component $component, string $property, ?string $action)
     {
         if (is_string($action)) {
             $component = $component->addProperty(Valarm::PROPERTY_ACTION, $action);
             $message = strtr(
-                '{property} is not a valid property of {component} when {component}::ACTION is {action}',
+                InvalidPropertyException::INVALID_PROPERTY_WHEN_ACTION_MESSAGE,
                 [
                     '{action}' => $action,
                     '{component}' => $component->getName(),
@@ -47,7 +46,7 @@ class PropertyTest extends TestCase
             );
         } else {
             $message = strtr(
-                '{property} is not a valid property of {component}',
+                InvalidPropertyException::INVALID_PROPERTY_MESSAGE,
                 [
                     '{component}' => $component->getName(),
                     '{property}' => $property
@@ -60,9 +59,7 @@ class PropertyTest extends TestCase
         $component->addProperty($property, random_int(0, 100));
     }
 
-    /**
-     * @dataProvider validPropertyProvider
-     */
+    #[DataProvider('validPropertyProvider')]
     public function test_valid_property(Component $component, string $property, ?string $action)
     {
         if (is_string($action)) {
@@ -76,9 +73,7 @@ class PropertyTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider validPropertyProvider
-     */
+    #[DataProvider('validPropertyProvider')]
     public function test_property_cardinality(Component $component, string $property, ?string $action)
     {
         if (is_string($action)) {
@@ -99,7 +94,7 @@ class PropertyTest extends TestCase
             $this->expectException(InvalidPropertyException::class);
             $this->expectExceptionMessage(
                 strtr(
-                    '{component} may only have one of property {property}',
+                    InvalidPropertyException::ONLY_ONE_PROPERTY_MESSAGE,
                     [
                         '{component}' => $component->getName(),
                         '{property}' => $property,
@@ -119,9 +114,7 @@ class PropertyTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider validPropertyProvider
-     */
+    #[DataProvider('validPropertyProvider')]
     public function test_remove_property(Component $component, string $property, ?string $action)
     {
         if (is_string($action)) {
@@ -196,19 +189,14 @@ class PropertyTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider missingPropertyProvider
-     */
+    #[DataProvider('missingPropertyProvider')]
     public function test_missing_property(Component $component, string $property)
     {
         $this->expectException(MissingPropertyException::class);
-        $this->expectExceptionMessage(strtr(
-            'Required property {property} not set in {component}',
-            [
-                '{property}' => $property,
-                '{component}' => $component->getName(),
-            ]
-        ));
+        $this->expectExceptionMessage(strtr(MissingPropertyException::MISSING_PROPERTY_EXCEPTION_MESSAGE, [
+            '{component}' => $component->getName(),
+            '{property}' => $property,
+        ]));
         $component->render();
     }
 
@@ -216,14 +204,14 @@ class PropertyTest extends TestCase
     {
         $vCalendar = new Vcalendar();
 
-        $nonStandardProperty = 'NON-STANDARD-PROPERTY';
+        $nonStandardProperty = 'UNREGISTERED-NON-STANDARD-PROPERTY';
 
         $this->expectException(InvalidPropertyException::class);
         $this->expectExceptionMessage(strtr(
-            '{property} is not a valid property of {component}',
+            InvalidPropertyException::INVALID_PROPERTY_MESSAGE,
             [
-                '{property}' => $nonStandardProperty,
-                '{component}' => $vCalendar->getName()
+                '{component}' => $vCalendar->getName(),
+                '{property}' => $nonStandardProperty
             ]
         ));
 
@@ -241,7 +229,7 @@ class PropertyTest extends TestCase
         $this->assertTrue($vCalendar->hasProperty($nonStandardProperty));
     }
 
-    public function invalidPropertyProvider(): \Generator
+    public static function invalidPropertyProvider(): \Generator
     {
         $properties = [
             Valarm::PROPERTY_ACTION,
@@ -322,16 +310,19 @@ class PropertyTest extends TestCase
                     ] as $yield
                 ) {
                     array_unshift($yield, $component);
-                    yield $yield;
+                    $name = implode('::', $yield);
+                    yield $name => $yield;
                 }
-            }
-            foreach (array_diff($properties, array_keys($component::CARDINALITY)) as $property) {
-                yield [$component, $property, null];
+            } else {
+                foreach (array_diff($properties, array_keys($component::CARDINALITY)) as $property) {
+                    $name = $component->getName() . '::' . $property;
+                    yield $name => [$component, $property, null];
+                }
             }
         }
     }
 
-    public function validPropertyProvider(): \Generator
+    public static function validPropertyProvider(): \Generator
     {
         foreach (
             [
@@ -363,20 +354,22 @@ class PropertyTest extends TestCase
                     ] as $yield
                 ) {
                     array_unshift($yield, $component);
-                    yield $yield;
+                    $name = implode('::', $yield);
+                    yield $name => $yield;
                 }
             } else {
                 foreach (array_keys($component::CARDINALITY) as $property) {
                     // Vcalendar::VERSION is set in the Vcalendar::_construct()
                     if (!$component instanceof Vcalendar && $property !== Vcalendar::PROPERTY_VERSION) {
-                        yield [$component, $property, null];
+                        $name = $component->getName() . '::' . $property;
+                        yield $name => [$component, $property, null];
                     }
                 }
             }
         }
     }
 
-    public function missingPropertyProvider(): \Generator
+    public static function missingPropertyProvider(): \Generator
     {
         foreach (
             [
@@ -389,9 +382,10 @@ class PropertyTest extends TestCase
                 [new Vjournal(), Vjournal::PROPERTY_DATETIME_STAMP],
                 [new Vtimezone(), Vtimezone::PROPERTY_TZ_ID],
                 [new Vtodo(), Vtodo::PROPERTY_DATETIME_STAMP],
-            ] as $componentProperty
+            ] as $yield
         ) {
-            yield [$componentProperty[0], $componentProperty[1]];
+            $name = implode('::', $yield);
+            yield $name => $yield;
         }
     }
 }

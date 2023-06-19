@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Valarm;
 use BeastBytes\ICalendar\Vcalendar;
@@ -14,21 +14,20 @@ use BeastBytes\ICalendar\Vevent;
 use BeastBytes\ICalendar\Vfreebusy;
 use BeastBytes\ICalendar\Vjournal;
 use BeastBytes\ICalendar\Vtodo;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CreateIcalendarTest extends TestCase
 {
-    /**
-     * @dataProvider icalendarProvider
-     */
+    #[DataProvider('icalendarProvider')]
     public function test_icalendar($icalendar, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $icalendar->render());
     }
 
-    public function icalendarProvider()
+    public static function icalendarProvider(): \Generator
     {
-        return [
+        foreach ([
             'simple_icalendar' => [
                 (new Vcalendar())
                     ->addProperty(
@@ -203,6 +202,8 @@ class CreateIcalendarTest extends TestCase
                     'END:VCALENDAR'
                 ]
             ]
-        ];
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }

@@ -6,26 +6,24 @@
 
 declare(strict_types=1);
 
-namespace Tests;
-
+namespace BeastBytes\ICalendar\Tests;
 
 use BeastBytes\ICalendar\Vevent;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VeventTest extends TestCase
 {
-    /**
-     * @dataProvider veventProvider
-     */
+    #[DataProvider('veventProvider')]
     public function test_vevent($vevent, $expected)
     {
         $this->assertSame(implode("\r\n", $expected) . "\r\n", $vevent->render());
     }
 
-    public function veventProvider()
+    public static function veventProvider(): \Generator
     {
-        return [
-            [
+        foreach ([
+            '19970901T130000Z-123401@example.com' => [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123401@example.com')
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
@@ -47,7 +45,7 @@ class VeventTest extends TestCase
                     'END:VEVENT'
                 ]
             ],
-            [
+            '19970901T130000Z-123402@example.com' => [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123402@example.com')
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
@@ -71,7 +69,7 @@ class VeventTest extends TestCase
                     'END:VEVENT'
                 ]
             ],
-            [
+            '19970901T130000Z-123403@example.com' => [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '19970901T130000Z-123403@example.com')
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '19970901T130000Z')
@@ -101,7 +99,7 @@ class VeventTest extends TestCase
                     'END:VEVENT'
                 ]
             ],
-            [
+            '20070423T123432Z-541111@example.com' => [
                 (new Vevent())
                     ->addProperty(Vevent::PROPERTY_UID, '20070423T123432Z-541111@example.com')
                     ->addProperty(Vevent::PROPERTY_DATETIME_STAMP, '20070423T123432Z')
@@ -131,8 +129,10 @@ class VeventTest extends TestCase
                     'SUMMARY:Festival International de Jazz de Montreal',
                     'TRANSP:TRANSPARENT',
                     'END:VEVENT'
-                ]
-            ]
-        ];
+                ],
+            ],
+        ] as $name => $value) {
+            yield $name => $value;
+        }
     }
 }
